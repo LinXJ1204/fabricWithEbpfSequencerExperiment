@@ -76,12 +76,12 @@ func main() {
 	network := gw.GetNetwork(channelName)
 	contract := network.GetContract(chaincodeName)
 
-	initLedger(contract)
+	//initLedger(contract)
 	getAllAssets(contract)
 	createAsset(contract)
 	readAssetByID(contract)
 	transferAssetAsync(contract)
-	exampleErrorHandling(contract)
+	//exampleErrorHandling(contract)
 }
 
 // newGrpcConnection creates a gRPC connection to the Gateway server.
@@ -100,7 +100,7 @@ func newGrpcConnection() *grpc.ClientConn {
 	certPool.AddCert(certificate)
 	transportCredentials := credentials.NewClientTLSFromCert(certPool, gatewayPeer)
 
-	connection, err := grpc.NewClient(peerEndpoint, grpc.WithTransportCredentials(transportCredentials))
+	connection, err := grpc.Dial(peerEndpoint, grpc.WithTransportCredentials(transportCredentials))
 	if err != nil {
 		panic(fmt.Errorf("failed to create gRPC connection: %w", err))
 	}

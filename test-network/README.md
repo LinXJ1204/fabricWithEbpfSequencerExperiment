@@ -51,18 +51,50 @@ The `setOrgEnv` script outputs a series of `<name>=<value>` strings. These can t
 To learn more about how to use the improvements to the Chaincode-as-a-service please see this [tutorial](./test-network/../CHAINCODE_AS_A_SERVICE_TUTORIAL.md). It is expected that this will move to augment the tutorial in the [Hyperledger Fabric ReadTheDocs](https://hyperledger-fabric.readthedocs.io/en/release-2.4/cc_service.html)
 
 
-## Podman
+## Orderers and Peers Host Number List
 
-*Note - podman support should be considered experimental but the following has been reported to work with podman 4.1.1 on Mac. If you wish to use podman a LinuxVM is recommended.*
+### Orderers
 
-Fabric's `install-fabric.sh` script has been enhanced to support using `podman` to pull down images and tag them rather than docker. The images are the same, just pulled differently. Simply specify the 'podman' argument when running the `install-fabric.sh` script. 
+1. Orderer0
+    * ORDERER_GENERAL_LISTENPORT = 7050
+    * ORDERER_ADMIN_LISTENADDRESS = 7053
+    * ORDERER_OPERATIONS_LISTENADDRESS = 7443
+    * UDP_SERVER_LISTENPORT = 7073/udp
 
-Similarly, the `network.sh` script has been enhanced so that it can use `podman` and `podman-compose` instead of docker. Just set the environment variable `CONTAINER_CLI` to `podman` before running the `network.sh` script:
+2. Orderer1
+    * ORDERER_GENERAL_LISTENPORT = 8050
+    * ORDERER_ADMIN_LISTENADDRESS = 8053
+    * ORDERER_OPERATIONS_LISTENADDRESS = 8443
+    * UDP_SERVER_LISTENPORT = 8073/udp
 
-```bash
-CONTAINER_CLI=podman ./network.sh up
-````
+3. Orderer2
+    * ORDERER_GENERAL_LISTENPORT = 9050
+    * ORDERER_ADMIN_LISTENADDRESS = 9053
+    * ORDERER_OPERATIONS_LISTENADDRESS = 9443
+    * UDP_SERVER_LISTENPORT = 9073/udp
+4. Orderer3
+    * ORDERER_GENERAL_LISTENPORT = 10050
+    * ORDERER_ADMIN_LISTENADDRESS = 10053
+    * ORDERER_OPERATIONS_LISTENADDRESS = 10443
+    * UDP_SERVER_LISTENPORT = 10073/udp
+5. Orderer4
+    * ORDERER_GENERAL_LISTENPORT = 11050
+    * ORDERER_ADMIN_LISTENADDRESS = 11053
+    * ORDERER_OPERATIONS_LISTENADDRESS = 11443
+    * UDP_SERVER_LISTENPORT = 11073/udp
 
-As there is no Docker-Daemon when using podman, only the `./network.sh deployCCAAS` command will work. Following the Chaincode-as-a-service Tutorial above should work. 
 
+### Peers
 
+1. peer0.org1.example.com
+    * CORE_PEER_LISTENADDRESS = 12051
+    * CORE_PEER_CHAINCODEADDRESS = 12052
+    * CORE_OPERATIONS_LISTENADDRESS = 12444
+2. peer1.org1.example.com
+    * CORE_PEER_LISTENADDRESS = 13051
+    * CORE_PEER_CHAINCODEADDRESS = 13052
+    * CORE_OPERATIONS_LISTENADDRESS = 13444
+3. peer3.org1.example.com
+    * CORE_PEER_LISTENADDRESS = 14051
+    * CORE_PEER_CHAINCODEADDRESS = 14052
+    * CORE_OPERATIONS_LISTENADDRESS = 14444

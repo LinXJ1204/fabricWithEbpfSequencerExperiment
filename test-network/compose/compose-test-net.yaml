@@ -50,11 +50,13 @@ services:
     volumes:
         - ../organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp:/var/hyperledger/orderer/msp
         - ../organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls/:/var/hyperledger/orderer/tls
+        - ../ebpfExec:/var/ebpfExec
         - orderer.example.com:/var/hyperledger/production/orderer
     ports:
       - 7050:7050
       - 7053:7053
       - 9443:9443
+      - 7073:7073/udp
     networks:
       - test
 
