@@ -11,6 +11,7 @@ volumes:
 networks:
   test:
     name: fabric_test
+    external: true
 
 services:
 

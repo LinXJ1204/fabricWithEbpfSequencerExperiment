@@ -1,1 +1,1 @@
-docker-compose -f ../compose/orderers/orderer3.yaml up
+docker compose -f ../compose/orderers/orderer3.yaml up -d 2>&1
