@@ -1,0 +1,1 @@
+osnadmin channel join --channelID mychannel  --config-block channel-artifacts/mychannel.block -o localhost:7053 --ca-file $OSN_TLS_CA_ROOT_CERT --client-cert $ADMIN_TLS_SIGN_CERT --client-key $ADMIN_TLS_PRIVATE_KEY
