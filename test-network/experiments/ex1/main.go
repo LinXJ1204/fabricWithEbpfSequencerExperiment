@@ -25,7 +25,7 @@ var gatewayPeers = [3]string{"peer0.org1.example.com", "peer1.org1.example.com",
 
 func main() {
 
-	const tpsLoading = 500
+	const tpsLoading = 50000
 
 	p0 := ContractForEachPeer(peerEndpoints[0], gatewayPeers[0])
 	p1 := ContractForEachPeer(peerEndpoints[1], gatewayPeers[1])
@@ -69,24 +69,28 @@ func readFirstFile(dirPath string) ([]byte, error) {
 }
 
 // Submit a transaction synchronously, blocking until it has been committed to the ledger.
-func createAsset(contract *client.Contract, assetId string) {
+func createAsset(contract *client.Contract, assetId string) error {
 	fmt.Printf("\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments \n")
 
 	submitResult, commit, err := contract.SubmitAsync("CreateAsset", client.WithArguments(assetId, "yellow", "5", "Tom", "1300"))
 	if err != nil {
-		panic(fmt.Errorf("failed to submit transaction asynchronously: %w", err))
+		(fmt.Errorf("failed to submit transaction asynchronously: %w", err))
+		return err
 	}
 
 	fmt.Printf("\n*** Successfully submitted transaction to transfer ownership from %s to Mark. \n", string(submitResult))
 	fmt.Println("*** Waiting for transaction commit.")
 
 	if commitStatus, err := commit.Status(); err != nil {
-		panic(fmt.Errorf("failed to get commit status: %w", err))
+		(fmt.Errorf("failed to get commit status: %w", err))
+		return err
 	} else if !commitStatus.Successful {
-		panic(fmt.Errorf("transaction %s failed to commit with status: %d", commitStatus.TransactionID, int32(commitStatus.Code)))
+		(fmt.Errorf("transaction %s failed to commit with status: %d", commitStatus.TransactionID, int32(commitStatus.Code)))
+		return err
 	}
 
 	fmt.Printf("*** Transaction committed successfully\n")
+	return nil
 }
 
 // Evaluate a transaction by assetID to query ledger state.
@@ -95,7 +99,7 @@ func readAssetByID(contract *client.Contract, assetId string) {
 
 	evaluateResult, err := contract.EvaluateTransaction("ReadAsset", assetId)
 	if err != nil {
-		panic(fmt.Errorf("failed to evaluate transaction: %w", err))
+		(fmt.Errorf("failed to evaluate transaction: %w", err))
 	}
 	result := formatJSON(evaluateResult)
 
@@ -104,24 +108,28 @@ func readAssetByID(contract *client.Contract, assetId string) {
 
 // Submit transaction asynchronously, blocking until the transaction has been sent to the orderer, and allowing
 // this thread to process the chaincode response (e.g. update a UI) without waiting for the commit notification
-func transferAssetAsync(contract *client.Contract, assetId string) {
+func transferAssetAsync(contract *client.Contract, assetId string) error {
 	fmt.Printf("\n--> Async Submit Transaction: TransferAsset, updates existing asset owner")
 
 	submitResult, commit, err := contract.SubmitAsync("TransferAsset", client.WithArguments(assetId, "Mark"))
 	if err != nil {
-		panic(fmt.Errorf("failed to submit transaction asynchronously: %w", err))
+		(fmt.Errorf("failed to submit transaction asynchronously: %w", err))
+		return err
 	}
 
 	fmt.Printf("\n*** Successfully submitted transaction to transfer ownership from %s to Mark. \n", string(submitResult))
 	fmt.Println("*** Waiting for transaction commit.")
 
 	if commitStatus, err := commit.Status(); err != nil {
-		panic(fmt.Errorf("failed to get commit status: %w", err))
+		(fmt.Errorf("failed to get commit status: %w", err))
+		return err
 	} else if !commitStatus.Successful {
-		panic(fmt.Errorf("transaction %s failed to commit with status: %d", commitStatus.TransactionID, int32(commitStatus.Code)))
+		(fmt.Errorf("transaction %s failed to commit with status: %d", commitStatus.TransactionID, int32(commitStatus.Code)))
+		return err
 	}
 
 	fmt.Printf("*** Transaction committed successfully\n")
+	return nil
 }
 
 // Format JSON data
