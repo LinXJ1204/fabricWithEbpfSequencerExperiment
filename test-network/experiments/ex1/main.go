@@ -31,9 +31,24 @@ func main() {
 	p1 := ContractForEachPeer(peerEndpoints[1], gatewayPeers[1])
 	p2 := ContractForEachPeer(peerEndpoints[2], gatewayPeers[2])
 
-	go measureTPSTransferAssetAsync(p0, tpsLoading)
-	go measureTPSTransferAssetAsync(p1, tpsLoading)
-	go measureTPSTransferAssetAsync(p2, tpsLoading)
+	// Add the number of goroutines to WaitGroup
+	wgg.Add(3)
+
+	// Launch goroutines for TPS experiment
+	go func() {
+		defer wgg.Done() // Mark this goroutine as done when finished
+		measureTPSTransferAssetAsync(p0, tpsLoading)
+	}()
+
+	go func() {
+		defer wgg.Done() // Mark this goroutine as done when finished
+		measureTPSTransferAssetAsync(p1, tpsLoading)
+	}()
+
+	go func() {
+		defer wgg.Done() // Mark this goroutine as done when finished
+		measureTPSTransferAssetAsync(p2, tpsLoading)
+	}()
 
 	wgg.Wait() // Wait for all async transactions to complete
 	fmt.Printf("=====Experiment Done=====")
@@ -57,9 +72,18 @@ func readFirstFile(dirPath string) ([]byte, error) {
 func createAsset(contract *client.Contract, assetId string) {
 	fmt.Printf("\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments \n")
 
-	_, err := contract.SubmitTransaction("CreateAsset", assetId, "yellow", "5", "Tom", "1300")
+	submitResult, commit, err := contract.SubmitAsync("CreateAsset", client.WithArguments(assetId, "yellow", "5", "Tom", "1300"))
 	if err != nil {
-		panic(fmt.Errorf("failed to submit transaction: %w", err))
+		panic(fmt.Errorf("failed to submit transaction asynchronously: %w", err))
+	}
+
+	fmt.Printf("\n*** Successfully submitted transaction to transfer ownership from %s to Mark. \n", string(submitResult))
+	fmt.Println("*** Waiting for transaction commit.")
+
+	if commitStatus, err := commit.Status(); err != nil {
+		panic(fmt.Errorf("failed to get commit status: %w", err))
+	} else if !commitStatus.Successful {
+		panic(fmt.Errorf("transaction %s failed to commit with status: %d", commitStatus.TransactionID, int32(commitStatus.Code)))
 	}
 
 	fmt.Printf("*** Transaction committed successfully\n")

@@ -23,7 +23,7 @@ const (
 func ContractForEachPeer(peerEndpoint string, gatewayPeer string) *client.Contract {
 	// The gRPC client connection should be shared by all Gateway connections to this endpoint
 	clientConnection := newGrpcConnection(gatewayPeer, peerEndpoint)
-	defer clientConnection.Close()
+	//defer clientConnection.Close()
 
 	id := newIdentity()
 	sign := newSign()
@@ -42,7 +42,7 @@ func ContractForEachPeer(peerEndpoint string, gatewayPeer string) *client.Contra
 	if err != nil {
 		panic(err)
 	}
-	defer gw.Close()
+	//defer gw.Close()
 
 	// Override default values for chaincode and channel name as they may differ in testing contexts.
 	chaincodeName := "mychaincode"
