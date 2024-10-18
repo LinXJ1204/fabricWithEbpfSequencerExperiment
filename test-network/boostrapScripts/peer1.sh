@@ -1,1 +1,0 @@
-DOCKER_SOCK=/var/run/docker.sock docker compose -f ../compose/peers/peer1.yaml -f ../compose/docker/docker-compose-test-net1.yaml up -d 2>&1

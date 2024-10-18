@@ -1,0 +1,1 @@
+docker compose -f ../../compose/orderers/orderer4.yaml up -d 2>&1

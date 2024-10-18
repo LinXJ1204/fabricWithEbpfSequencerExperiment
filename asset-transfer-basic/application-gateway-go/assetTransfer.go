@@ -31,7 +31,7 @@ const (
 	certPath     = cryptoPath + "/users/User1@org1.example.com/msp/signcerts"
 	keyPath      = cryptoPath + "/users/User1@org1.example.com/msp/keystore"
 	tlsCertPath  = cryptoPath + "/peers/peer0.org1.example.com/tls/ca.crt"
-	peerEndpoint = "dns:///localhost:7051"
+	peerEndpoint = "dns:///localhost:12051"
 	gatewayPeer  = "peer0.org1.example.com"
 )
 
@@ -63,7 +63,7 @@ func main() {
 	defer gw.Close()
 
 	// Override default values for chaincode and channel name as they may differ in testing contexts.
-	chaincodeName := "basic"
+	chaincodeName := "mychaincode"
 	if ccname := os.Getenv("CHAINCODE_NAME"); ccname != "" {
 		chaincodeName = ccname
 	}
@@ -80,7 +80,7 @@ func main() {
 	getAllAssets(contract)
 	createAsset(contract)
 	readAssetByID(contract)
-	transferAssetAsync(contract)
+	//transferAssetAsync(contract)
 	//exampleErrorHandling(contract)
 }
 
