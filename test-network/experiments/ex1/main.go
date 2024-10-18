@@ -37,17 +37,17 @@ func main() {
 	// Launch goroutines for TPS experiment
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p0, tpsLoading, 1000)
+		measureTPSTransferAssetAsync(p0, tpsLoading, 300)
 	}()
 
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p1, tpsLoading, 1000)
+		measureTPSTransferAssetAsync(p1, tpsLoading, 300)
 	}()
 
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p2, tpsLoading, 1000)
+		measureTPSTransferAssetAsync(p2, tpsLoading, 300)
 	}()
 
 	wgg.Wait() // Wait for all async transactions to complete

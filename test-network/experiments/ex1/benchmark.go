@@ -15,7 +15,9 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 	startTime := time.Now()
 
 	errCount := 0
-	var mu sync.Mutex // Mutex for thread-safe error count updates
+	txCount := 0
+	var mu sync.Mutex  // Mutex for thread-safe error count updates
+	var mu1 sync.Mutex // Mutex for thread-safe error count updates
 
 	for i := 0; i < numTransactions; i++ {
 		wg.Add(1)
@@ -29,11 +31,18 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 				errCount++
 				mu.Unlock()
 			} else {
+				mu1.Lock()
+				txCount++
+				mu1.Unlock()
 				err = transferAssetAsync(contract, assetId) // Submit an asynchronous transaction
 				if err != nil {
 					mu.Lock()
 					errCount++
 					mu.Unlock()
+				} else {
+					mu1.Lock()
+					txCount++
+					mu1.Unlock()
 				}
 			}
 		}(i)
@@ -41,7 +50,7 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 
 	wg.Wait() // Wait for all async transactions to complete
 	elapsedTime := time.Since(startTime).Seconds()
-	tps := float64(numTransactions) / elapsedTime
+	tps := float64(txCount) / elapsedTime
 	fmt.Printf("\nAsynchronous TransferAsset Transactions Per Second (TPS): %.2f\n", tps)
 	fmt.Printf("\nAsynchronous TransferAsset Transactions Failed: %.2f\n", errCount)
 }
