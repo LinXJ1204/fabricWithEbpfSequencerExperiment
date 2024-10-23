@@ -72,7 +72,7 @@ func main() {
 	network := gw.GetNetwork(channelName)
 	contract := network.GetContract(chaincodeName)
 
-	initLedger(contract)
+	//initLedger(contract)
 	getAllAssets(contract)
 }
 

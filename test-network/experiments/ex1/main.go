@@ -20,12 +20,12 @@ import (
 var wgg sync.WaitGroup
 var wg sync.WaitGroup
 
-var peerEndpoints = [3]string{"dns:///127.0.0.1:12051", "dns:///127.0.0.1:13051", "dns:///127.0.0.1:14051"}
+var peerEndpoints = [3]string{"dns:///192.168.50.224:12051", "dns:///192.168.50.213:13051", "dns:///192.168.50.50:14051"}
 var gatewayPeers = [3]string{"peer0.org1.example.com", "peer1.org1.example.com", "peer2.org1.example.com"}
 
 func main() {
 
-	const tpsLoading = 500
+	const tpsLoading = 50000
 
 	p0 := ContractForEachPeer(peerEndpoints[0], gatewayPeers[0])
 	p1 := ContractForEachPeer(peerEndpoints[1], gatewayPeers[1])
@@ -37,17 +37,17 @@ func main() {
 	// Launch goroutines for TPS experiment
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p0, tpsLoading, 1000)
+		measureTPSTransferAssetAsync(p0, tpsLoading, 500)
 	}()
 
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p1, tpsLoading, 1000)
+		measureTPSTransferAssetAsync(p1, tpsLoading, 500)
 	}()
 
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p2, tpsLoading, 1000)
+		measureTPSTransferAssetAsync(p2, tpsLoading, 500)
 	}()
 
 	wgg.Wait() // Wait for all async transactions to complete
@@ -72,7 +72,7 @@ func readFirstFile(dirPath string) ([]byte, error) {
 func createAsset(contract *client.Contract, assetId string) error {
 	fmt.Printf("\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments \n")
 
-	submitResult, commit, err := contract.SubmitAsync("CreateAsset", client.WithArguments(assetId, "yellow", "5", "Tom", "1300"))
+	submitResult, _, err := contract.SubmitAsync("CreateAsset", client.WithArguments(assetId, "yellow", "5", "Tom", "1300"))
 	if err != nil {
 		(fmt.Errorf("failed to submit transaction asynchronously: %w", err))
 		return err
@@ -81,15 +81,6 @@ func createAsset(contract *client.Contract, assetId string) error {
 	fmt.Printf("\n*** Successfully submitted transaction to transfer ownership from %s to Mark. \n", string(submitResult))
 	fmt.Println("*** Waiting for transaction commit.")
 
-	if commitStatus, err := commit.Status(); err != nil {
-		(fmt.Errorf("failed to get commit status: %w", err))
-		return err
-	} else if !commitStatus.Successful {
-		(fmt.Errorf("transaction %s failed to commit with status: %d", commitStatus.TransactionID, int32(commitStatus.Code)))
-		return err
-	}
-
-	fmt.Printf("*** Transaction committed successfully\n")
 	return nil
 }
 
@@ -111,7 +102,7 @@ func readAssetByID(contract *client.Contract, assetId string) {
 func transferAssetAsync(contract *client.Contract, assetId string) error {
 	fmt.Printf("\n--> Async Submit Transaction: TransferAsset, updates existing asset owner")
 
-	submitResult, commit, err := contract.SubmitAsync("TransferAsset", client.WithArguments(assetId, "Mark"))
+	submitResult, _, err := contract.SubmitAsync("TransferAsset", client.WithArguments(assetId, "SOLO"))
 	if err != nil {
 		(fmt.Errorf("failed to submit transaction asynchronously: %w", err))
 		return err
@@ -120,15 +111,6 @@ func transferAssetAsync(contract *client.Contract, assetId string) error {
 	fmt.Printf("\n*** Successfully submitted transaction to transfer ownership from %s to Mark. \n", string(submitResult))
 	fmt.Println("*** Waiting for transaction commit.")
 
-	if commitStatus, err := commit.Status(); err != nil {
-		(fmt.Errorf("failed to get commit status: %w", err))
-		return err
-	} else if !commitStatus.Successful {
-		(fmt.Errorf("transaction %s failed to commit with status: %d", commitStatus.TransactionID, int32(commitStatus.Code)))
-		return err
-	}
-
-	fmt.Printf("*** Transaction committed successfully\n")
 	return nil
 }
 

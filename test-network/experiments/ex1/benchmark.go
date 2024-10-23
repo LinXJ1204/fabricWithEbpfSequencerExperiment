@@ -21,7 +21,7 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 	for i := 0; i < numTransactions; i++ {
 		wg.Add(1)
 		assetId := "asset" + strconv.Itoa(int(time.Now().UnixNano())) // Generate random asset IDs
-		time.Sleep(time.Duration(1/workload*1000) * time.Millisecond)
+		time.Sleep(time.Duration(1/float64(workload)*1000) * time.Millisecond)
 		go func(i int) {
 			defer wg.Done()
 			err := createAsset(contract, assetId)
