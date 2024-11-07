@@ -20,7 +20,7 @@ import (
 var wgg sync.WaitGroup
 var wg sync.WaitGroup
 
-var peerEndpoints = [3]string{"dns:///192.168.50.224:12051", "dns:///192.168.50.213:13051", "dns:///192.168.50.50:14051"}
+var peerEndpoints = [3]string{"192.168.50.213:12051", "192.168.50.230:13051", "192.168.50.16:14051"}
 var gatewayPeers = [3]string{"peer0.org1.example.com", "peer1.org1.example.com", "peer2.org1.example.com"}
 
 func main() {
@@ -37,17 +37,17 @@ func main() {
 	// Launch goroutines for TPS experiment
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p0, tpsLoading, 500)
+		measureTPSTransferAssetAsync(p0, tpsLoading, 1000)
 	}()
 
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p1, tpsLoading, 500)
+		measureTPSTransferAssetAsync(p1, tpsLoading, 1000)
 	}()
 
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p2, tpsLoading, 500)
+		measureTPSTransferAssetAsync(p2, tpsLoading, 1000)
 	}()
 
 	wgg.Wait() // Wait for all async transactions to complete
@@ -78,7 +78,7 @@ func createAsset(contract *client.Contract, assetId string) error {
 		return err
 	}
 
-	fmt.Printf("\n*** Successfully submitted transaction to transfer ownership from %s to Mark. \n", string(submitResult))
+	fmt.Printf("\n*** Successfully submitted transaction. \n", string(submitResult))
 	fmt.Println("*** Waiting for transaction commit.")
 
 	return nil

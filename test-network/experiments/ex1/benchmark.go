@@ -33,18 +33,8 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 			} else {
 				mu1.Lock()
 				txCount++
+				fmt.Println(txCount - 1)
 				mu1.Unlock()
-				err = transferAssetAsync(contract, assetId) // Submit an asynchronous transaction
-				if err != nil {
-					fmt.Println("====ERROR 2====")
-					mu.Lock()
-					errCount++
-					mu.Unlock()
-				} else {
-					mu1.Lock()
-					txCount++
-					mu1.Unlock()
-				}
 			}
 		}(i)
 	}
