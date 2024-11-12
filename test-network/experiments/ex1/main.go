@@ -25,7 +25,7 @@ var gatewayPeers = [3]string{"peer0.org1.example.com", "peer1.org1.example.com",
 
 func main() {
 
-	const tpsLoading = 50000
+	const tpsLoading = 90000
 
 	p0 := ContractForEachPeer(peerEndpoints[0], gatewayPeers[0])
 	p1 := ContractForEachPeer(peerEndpoints[1], gatewayPeers[1])
