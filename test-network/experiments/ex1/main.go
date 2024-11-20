@@ -29,7 +29,7 @@ func main() {
 
 	p0 := ContractForEachPeer(peerEndpoints[0], gatewayPeers[0])
 	p1 := ContractForEachPeer(peerEndpoints[1], gatewayPeers[1])
-	p2 := ContractForEachPeer(peerEndpoints[2], gatewayPeers[2])
+	//p2 := ContractForEachPeer(peerEndpoints[2], gatewayPeers[2])
 
 	// Add the number of goroutines to WaitGroup
 	wgg.Add(3)
@@ -45,10 +45,10 @@ func main() {
 		measureTPSTransferAssetAsync(p1, tpsLoading, 1000)
 	}()
 
-	go func() {
+	/* 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
 		measureTPSTransferAssetAsync(p2, tpsLoading, 1000)
-	}()
+	}() */
 
 	wgg.Wait() // Wait for all async transactions to complete
 	fmt.Printf("=====Experiment Done=====")

@@ -28,12 +28,12 @@ const (
 	certPath     = cryptoPath + "/users/User1@org1.example.com/msp/signcerts"
 	keyPath      = cryptoPath + "/users/User1@org1.example.com/msp/keystore"
 	tlsCertPath  = cryptoPath + "/peers/peer0.org1.example.com/tls/ca.crt"
-	peerEndpoint = "dns:///localhost:13051"
-	gatewayPeer  = "peer1.org1.example.com"
+	peerEndpoint = "dns:///localhost:14051"
+	gatewayPeer  = "peer2.org1.example.com"
 )
 
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) // Adjust duration here
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second) // Adjust duration here
 	defer cancel()
 
 	// The gRPC client connection should be shared by all Gateway connections to this endpoint
