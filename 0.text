@@ -1,1 +1,12 @@
 osnadmin channel join --channelID mychannel  --config-block channel-artifacts/mychannel.block -o localhost:7053 --ca-file $OSN_TLS_CA_ROOT_CERT --client-cert $ADMIN_TLS_SIGN_CERT --client-key $ADMIN_TLS_PRIVATE_KEY
+
+sudo docker rm -f $(sudo docker ps -a -q)
+sudo docker volume rm $(sudo docker volume ls -q)
+
+mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments
+
+mainPlan/fabricWithEbpfSequencer
+
+mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode
+
+export PATH=../../../bin:$PATH
