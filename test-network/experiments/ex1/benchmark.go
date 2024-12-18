@@ -17,6 +17,8 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 
 	errCount := 0
 	txCount := 0
+	ltCount := 0
+	totalLt := 0
 	var mu sync.Mutex  // Mutex for thread-safe error count updates
 	var mu1 sync.Mutex // Mutex for thread-safe error count updates
 
@@ -26,17 +28,31 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 		time.Sleep(time.Duration(1/float64(workload)*1000000) * time.Microsecond)
 		go func(i int) {
 			defer wg1.Done()
-			err := createAsset(contract, assetId)
-			if err != nil {
-				fmt.Println("====ERROR 1s====")
-				mu.Lock()
-				errCount++
-				mu.Unlock()
+			if i%500 == 0 {
+				latency, err := createAssetWithLatency(contract, assetId)
+				if err != nil {
+					mu.Lock()
+					errCount++
+					mu.Unlock()
+				} else {
+					mu1.Lock()
+					txCount++
+					ltCount++
+					totalLt += int(latency)
+					fmt.Printf("=======Transaction Average Latency: %d =======\n", totalLt/ltCount)
+					mu1.Unlock()
+				}
 			} else {
-				mu1.Lock()
-				txCount++
-				fmt.Println(txCount - 1)
-				mu1.Unlock()
+				err := createAsset(contract, assetId)
+				if err != nil {
+					mu.Lock()
+					errCount++
+					mu.Unlock()
+				} else {
+					mu1.Lock()
+					txCount++
+					mu1.Unlock()
+				}
 			}
 		}(i)
 	}
