@@ -91,20 +91,10 @@ func createAssetWithLatency(contract *client.Contract, assetId string) (int64, e
 
 	startTime := time.Now()
 
-	submitResult, commit, err := contract.SubmitAsync("CreateAsset", client.WithArguments(assetId, "yellow", "5", "Tom", "1300"))
+	_, err := contract.SubmitTransaction("CreateAsset", assetId, "yellow", "5", "Tom", "1300")
 	if err != nil {
 		(fmt.Errorf("failed to submit transaction asynchronously: %w", err))
 		return 0, err
-	}
-
-	fmt.Printf("\n*** Successfully submitted transaction. \n", string(submitResult))
-
-	if commitStatus, err := commit.Status(); err != nil {
-		fmt.Printf("failed to get commit status: %w", err)
-		return 0, err
-	} else if !commitStatus.Successful {
-		fmt.Printf("transaction %s failed to commit with status: %d", commitStatus.TransactionID, int32(commitStatus.Code))
-		fmt.Printf("failed to get commit status: %w", err)
 	}
 
 	fmt.Printf("*** Transaction committed successfully\n")
