@@ -20,7 +20,7 @@ import (
 var wgg sync.WaitGroup
 var wg sync.WaitGroup
 
-var peerEndpoints = [3]string{"192.168.50.213:12051", "192.168.50.230:13051", "192.168.50.16:14051"}
+var peerEndpoints = [3]string{"192.168.50.224:12051", "192.168.50.230:13051", "192.168.50.16:14051"}
 var gatewayPeers = [3]string{"peer0.org1.example.com", "peer1.org1.example.com", "peer2.org1.example.com"}
 
 func main() {
@@ -32,7 +32,7 @@ func main() {
 	//p2 := ContractForEachPeer(peerEndpoints[2], gatewayPeers[2])
 
 	// Add the number of goroutines to WaitGroup
-	wgg.Add(3)
+	wgg.Add(2)
 
 	// Launch goroutines for TPS experiment
 	go func() {

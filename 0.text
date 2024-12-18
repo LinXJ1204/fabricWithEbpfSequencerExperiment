@@ -10,3 +10,5 @@ mainPlan/fabricWithEbpfSequencer
 mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode
 
 export PATH=../../../bin:$PATH
+
+mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec
