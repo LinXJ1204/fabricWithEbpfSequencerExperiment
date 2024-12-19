@@ -28,7 +28,7 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 		time.Sleep(time.Duration(1/float64(workload)*1000000) * time.Microsecond)
 		go func(i int) {
 			defer wg1.Done()
-			if i%500 == 0 {
+			if i%100 == 0 {
 				latency, err := createAssetWithLatency(contract, assetId)
 				if err != nil {
 					mu.Lock()
