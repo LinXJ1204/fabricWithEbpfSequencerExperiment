@@ -19,9 +19,8 @@ import (
 )
 
 var wgg sync.WaitGroup
-var wg sync.WaitGroup
 
-var peerEndpoints = [3]string{"192.168.50.224:12051", "192.168.50.230:13051", "192.168.50.16:14051"}
+var peerEndpoints = [3]string{"192.168.50.224:12051", "192.168.50.230:13051", "192.168.50.230:14051"}
 var gatewayPeers = [3]string{"peer0.org1.example.com", "peer1.org1.example.com", "peer2.org1.example.com"}
 
 func main() {
@@ -93,7 +92,6 @@ func createAssetWithLatency(contract *client.Contract, assetId string) (int64, e
 
 	_, err := contract.SubmitTransaction("CreateAsset", assetId, "yellow", "5", "Tom", "1300")
 	if err != nil {
-		(fmt.Errorf("failed to submit transaction asynchronously: %w", err))
 		return 0, err
 	}
 

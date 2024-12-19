@@ -33,6 +33,7 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 				if err != nil {
 					mu.Lock()
 					errCount++
+					fmt.Printf("=======Transaction Average Latency Error=======\n", totalLt/ltCount)
 					mu.Unlock()
 				} else {
 					mu1.Lock()
