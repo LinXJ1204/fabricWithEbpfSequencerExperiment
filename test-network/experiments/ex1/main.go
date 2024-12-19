@@ -25,7 +25,7 @@ var gatewayPeers = [3]string{"peer0.org1.example.com", "peer1.org1.example.com",
 
 func main() {
 
-	const tpsLoading = 90000
+	const tpsLoading = 3000
 
 	p0 := ContractForEachPeer(peerEndpoints[0], gatewayPeers[0])
 	p1 := ContractForEachPeer(peerEndpoints[1], gatewayPeers[1])
@@ -37,12 +37,12 @@ func main() {
 	// Launch goroutines for TPS experiment
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p0, tpsLoading, 1000)
+		measureTPSTransferAssetAsync(p0, tpsLoading, 100)
 	}()
 
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p1, tpsLoading, 1000)
+		measureTPSTransferAssetAsync(p1, tpsLoading, 100)
 	}()
 
 	/* 	go func() {
@@ -70,24 +70,16 @@ func readFirstFile(dirPath string) ([]byte, error) {
 
 // Submit a transaction synchronously, blocking until it has been committed to the ledger.
 func createAsset(contract *client.Contract, assetId string) error {
-	fmt.Printf("\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments \n")
-
-	submitResult, _, err := contract.SubmitAsync("CreateAsset", client.WithArguments(assetId, "yellow", "5", "Tom", "1300"))
+	_, _, err := contract.SubmitAsync("CreateAsset", client.WithArguments(assetId, "yellow", "5", "Tom", "1300"))
 	if err != nil {
-		(fmt.Errorf("failed to submit transaction asynchronously: %w", err))
 		return err
 	}
-
-	fmt.Printf("\n*** Successfully submitted transaction. \n", string(submitResult))
-	fmt.Println("*** Waiting for transaction commit.")
 
 	return nil
 }
 
 // Submit a transaction synchronously, blocking until it has been committed to the ledger.
 func createAssetWithLatency(contract *client.Contract, assetId string) (int64, error) {
-	fmt.Printf("\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments \n")
-
 	startTime := time.Now()
 
 	_, err := contract.SubmitTransaction("CreateAsset", assetId, "yellow", "5", "Tom", "1300")
@@ -95,7 +87,6 @@ func createAssetWithLatency(contract *client.Contract, assetId string) (int64, e
 		return 0, err
 	}
 
-	fmt.Printf("*** Transaction committed successfully\n")
 	duration := time.Since(startTime).Microseconds()
 
 	return duration, nil
