@@ -124,58 +124,58 @@ echo -e "\n>>> Waiting 5 seconds..."
 sleep 5
 
 # 9) joinChannel/orderer.sh in Device0
-run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./orderer.sh"
+run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./orderer.sh"
 
 # 10) joinChannel/orderer1.sh in Device1
-run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./orderer1.sh"
+run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./orderer1.sh"
 
 # 11) joinChannel/orderer2.sh in Device2
-run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./orderer2.sh"
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./orderer2.sh"
 
 # 12) joinChannel/orderer3.sh in Device3
-run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./orderer3.sh"
+run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../../bin:$PATH && ./orderer3.sh"
 
 # 13) joinChannel/orderer4.sh in Device4
-run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./orderer4.sh"
+run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../../bin:$PATH && ./orderer4.sh"
 
 # 14) Wait 10 seconds
 echo -e "\n>>> Waiting 5 seconds..."
 sleep 5
 
 # 15) joinChannel/peer.sh in Device0
-run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./peer.sh"
+run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./peer.sh"
 
 # 16) joinChannel/peer1.sh in Device2
-run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./peer1.sh"
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./peer1.sh"
 
 # 17) joinChannel/peer2.sh in Device2
-run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./peer2.sh"
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./peer2.sh"
 
 echo -e "\n>>> Waiting 5 seconds..."
 sleep 5
 
 # 18) CCpackage/peerCCInstall.sh in Device0
-run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && ./peerCCInstall.sh"
+run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && export PATH=../../../bin:$PATH && ./peerCCInstall.sh"
 
 # 19) CCpackage/peer1CCInstall.sh in Device2
-run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && ./peer1CCInstall.sh"
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && export PATH=../../../bin:$PATH && ./peer1CCInstall.sh"
 
 # 20) CCpackage/peer2CCInstall.sh in Device2
-run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && ./peer2CCInstall.sh"
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && export PATH=../../../bin:$PATH && ./peer2CCInstall.sh"
 
 # 21) Wait 10 seconds
 echo -e "\n>>> Waiting 10 seconds..."
 sleep 10
 
 # 22) CCpackage/approveCC.sh in Device0
-run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && ./approveCC.sh"
+run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && export PATH=../../../bin:$PATH && ./approveCC.sh"
 
 # 23) Wait 10 seconds
 echo -e "\n>>> Waiting 10 seconds..."
 sleep 10
 
 # 24) CCpackage/commitCC.sh in Device0
-run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && ./commitCC.sh"
+run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && export PATH=../../../bin:$PATH && ./commitCC.sh"
 
 # 25) Wait 10 seconds
 echo -e "\n>>> Waiting 10 seconds..."
