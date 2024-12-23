@@ -54,8 +54,8 @@ for i in "${!DEVICES[@]}"; do
   IFS=' ' read -r ip user pass <<< "${DEVICES[$i]}"
   echo -e "\n>>> [Device $i: $ip] Initializing Docker Cleanup..."
   sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
-    "echo '$pass' | sudo -S docker rm -f \$(sudo docker ps -a -q) && \
-     echo '$pass' | sudo -S docker volume rm \$(sudo docker volume ls -q)"
+    "echo '$pass' | docker rm -f \$(docker ps -a -q) && \
+     echo '$pass' | docker volume rm \$(docker volume ls -q)"
 done
 
 # -----------------------------------------------------------------------------
@@ -106,10 +106,10 @@ run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/
 run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./orderer2.sh"
 
 # 4) sudo bringUpNode/orderer3.sh on Device3
-run_cmd_on_device 3 "sudo bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/orderer3.sh"
+run_cmd_on_device 3 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/orderer3.sh"
 
 # 5) sudo bringUpNode/orderer4.sh on Device4
-run_cmd_on_device 4 "sudo bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/orderer4.sh"
+run_cmd_on_device 4 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/orderer4.sh"
 
 # 6) bringUpNode/peer.sh in Device0
 run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./peer.sh"
@@ -119,6 +119,9 @@ run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/
 
 # 8) bringUpNode/peer2.sh in Device2
 run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./peer2.sh"
+
+echo -e "\n>>> Waiting 5 seconds..."
+sleep 5
 
 # 9) joinChannel/orderer.sh in Device0
 run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./orderer.sh"
@@ -136,8 +139,8 @@ run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/
 run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./orderer4.sh"
 
 # 14) Wait 10 seconds
-echo -e "\n>>> Waiting 10 seconds..."
-sleep 10
+echo -e "\n>>> Waiting 5 seconds..."
+sleep 5
 
 # 15) joinChannel/peer.sh in Device0
 run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./peer.sh"
@@ -147,6 +150,9 @@ run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/
 
 # 17) joinChannel/peer2.sh in Device2
 run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./peer2.sh"
+
+echo -e "\n>>> Waiting 5 seconds..."
+sleep 5
 
 # 18) CCpackage/peerCCInstall.sh in Device0
 run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && ./peerCCInstall.sh"
