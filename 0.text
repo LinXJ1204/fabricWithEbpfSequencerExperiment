@@ -12,3 +12,7 @@ mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpN
 export PATH=../../../bin:$PATH
 
 mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec
+
+df -h /tmp
+
+docker network create  --driver overlay   --attachable first-network
