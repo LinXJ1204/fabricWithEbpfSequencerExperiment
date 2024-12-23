@@ -106,10 +106,10 @@ run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/
 run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./orderer2.sh"
 
 # 4) sudo bringUpNode/orderer3.sh on Device3
-run_cmd_on_device 3 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/orderer3.sh"
+run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./orderer3.sh"
 
 # 5) sudo bringUpNode/orderer4.sh on Device4
-run_cmd_on_device 4 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/orderer4.sh"
+run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./orderer4.sh"
 
 # 6) bringUpNode/peer.sh in Device0
 run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./peer.sh"
