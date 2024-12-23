@@ -13,8 +13,8 @@ devices=(
 # Cleanup step
 echo "Initializing cleanup on all devices..."
 for device in "${!devices[@]}"; do
-  IFS=":" read -r username keyword <<< "${devices[$device]}"
-  sshpass -p "$keyword" ssh -o StrictHostKeyChecking=no $username@$device "sudo docker rm -f \$(sudo docker ps -a -q) && sudo docker volume rm \$(sudo docker volume ls -q)"
+  IFS=":" read -r username password <<< "${devices[$device]}"
+  sshpass -p "$password" ssh -o StrictHostKeyChecking=no $username@$device "echo '$password' | sudo -S docker rm -f \$(sudo docker ps -a -q) && echo '$password' | sudo -S docker volume rm \$(sudo docker volume ls -q)"
 done
 
 # Setup step
