@@ -51,7 +51,11 @@ echo "====================="
 echo " Step 1: Initialize "
 echo "====================="
 for i in "${!DEVICES[@]}"; do
-  run_cmd_on_device "$i" "sudo docker rm -f \$(sudo docker ps -a -q) && sudo docker volume rm \$(sudo docker volume ls -q)"
+  IFS=' ' read -r ip user pass <<< "${DEVICES[$i]}"
+  echo -e "\n>>> [Device $i: $ip] Initializing Docker Cleanup..."
+  sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
+    "echo '$pass' | sudo -S docker rm -f \$(sudo docker ps -a -q) && \
+     echo '$pass' | sudo -S docker volume rm \$(sudo docker volume ls -q)"
 done
 
 # -----------------------------------------------------------------------------
