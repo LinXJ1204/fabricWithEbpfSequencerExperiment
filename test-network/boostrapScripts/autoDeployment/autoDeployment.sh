@@ -1,78 +1,180 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Define device information
-declare -A devices
-devices=(
-  ["192.168.50.224"]="nsd:nsd"
-  ["192.168.50.213"]="nsd:nsd"
-  ["192.168.50.230"]="udrt:nsd12345"
-  ["192.168.50.239"]="nsd1235:nsd12345"
-  ["192.168.50.219"]="nsd12345:nsd12345"
-)
+###############################################################################
+# Auto-Deployment Script for Multi-Device Hyperledger Fabric Setup
+#
+# This script performs:
+#   1. Docker cleanup (containers + volumes) on all devices
+#   2. Sequential execution of the setup scripts on the correct devices
+#
+# Prerequisites:
+#   1. sshpass installed on local machine
+#   2. Password-based SSH access to remote devices
+#
+# Usage:
+#   ./auto_deploy.sh
+###############################################################################
 
-# Cleanup step
-echo "Initializing cleanup on all devices..."
-for device in "${!devices[@]}"; do
-  IFS=":" read -r username password <<< "${devices[$device]}"
-  sshpass -p "$password" ssh -o StrictHostKeyChecking=no $username@$device "echo '$password' | sudo -S docker rm -f \$(sudo docker ps -a -q) && echo '$password' | sudo -S docker volume rm \$(sudo docker volume ls -q)"
+# -----------------------------------------------------------------------------
+# Configuration
+# -----------------------------------------------------------------------------
+
+# Each entry:  DeviceIndex => "IPAddress Username Password"
+declare -A DEVICES
+DEVICES["0"]="192.168.50.224 nsd nsd"
+DEVICES["1"]="192.168.50.213 nsd nsd"
+DEVICES["2"]="192.168.50.230 udrt nsd12345"
+DEVICES["3"]="192.168.50.239 nsd1235 nsd12345"
+DEVICES["4"]="192.168.50.219 nsd12345 nsd12345"
+
+# Helper function to run a command over SSH on a specific device
+run_cmd_on_device() {
+  local device_index=$1
+  local cmd=$2
+
+  # Extract connection info
+  IFS=' ' read -r ip user pass <<< "${DEVICES[$device_index]}"
+
+  # Execute command via sshpass, ignoring known-hosts prompt
+  echo -e "\n>>> [Device $device_index: $ip] Running command: $cmd"
+  sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" "$cmd"
+}
+
+# -----------------------------------------------------------------------------
+# 1. Initialize (Docker Cleanup)
+#    Run on all devices:
+#      sudo docker rm -f $(sudo docker ps -a -q)
+#      sudo docker volume rm $(sudo docker volume ls -q)
+# -----------------------------------------------------------------------------
+
+echo "====================="
+echo " Step 1: Initialize "
+echo "====================="
+for i in "${!DEVICES[@]}"; do
+  run_cmd_on_device "$i" "sudo docker rm -f \$(sudo docker ps -a -q) && sudo docker volume rm \$(sudo docker volume ls -q)"
 done
 
-# Setup step
-declare -A setup_scripts=(
-  ["192.168.50.224"]="mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/orderer.sh"
-  ["192.168.50.213"]="mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/orderer1.sh"
-  ["192.168.50.230"]="mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/orderer2.sh"
-  ["192.168.50.239"]="sudo mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/orderer3.sh"
-  ["192.168.50.219"]="sudo mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/orderer4.sh"
-)
+# -----------------------------------------------------------------------------
+# 2. Setup
+#
+# Order of scripts to run (all paths relative to mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts):
+#
+#   1. bringUpNode/orderer.sh in Device0
+#   2. bringUpNode/orderer1.sh in Device1
+#   3. bringUpNode/orderer2.sh in Device2
+#   4. sudo bringUpNode/orderer3.sh in Device3
+#   5. sudo bringUpNode/orderer4.sh in Device4
+#   6. bringUpNode/peer.sh in Device0
+#   7. bringUpNode/peer1.sh in Device2
+#   8. bringUpNode/peer2.sh in Device2
+#   9. joinChannel/orderer.sh in Device0
+#   10. joinChannel/orderer1.sh in Device1
+#   11. joinChannel/orderer2.sh in Device2
+#   12. joinChannel/orderer3.sh in Device3
+#   13. joinChannel/orderer4.sh in Device4
+#   14. Wait 10 seconds
+#   15. joinChannel/peer.sh in Device0
+#   16. joinChannel/peer1.sh in Device2
+#   17. joinChannel/peer2.sh in Device2
+#   18. CCpackage/peerCCInstall.sh in Device0
+#   19. CCpackage/peer1CCInstall.sh in Device2
+#   20. CCpackage/peer2CCInstall.sh in Device2
+#   21. Wait 10 seconds
+#   22. CCpackage/approveCC.sh in Device0
+#   23. Wait 10 seconds
+#   24. CCpackage/commitCC.sh in Device0
+#   25. Wait 10 seconds
+#
+# -----------------------------------------------------------------------------
 
-echo "Setting up Orderers..."
-for device in "${!setup_scripts[@]}"; do
-  IFS=":" read -r username keyword <<< "${devices[$device]}"
-  sshpass -p "$keyword" ssh -o StrictHostKeyChecking=no $username@$device "bash ${setup_scripts[$device]}"
-done
+echo ""
+echo "=================="
+echo " Step 2: Setup   "
+echo "=================="
 
-# Peer setup
-echo "Setting up peers..."
-sshpass -p "nsd" ssh -o StrictHostKeyChecking=no nsd@192.168.50.224 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/peer.sh"
-sshpass -p "nsd12345" ssh -o StrictHostKeyChecking=no udrt@192.168.50.230 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/peer1.sh"
-sshpass -p "nsd12345" ssh -o StrictHostKeyChecking=no udrt@192.168.50.230 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/peer2.sh"
+# 1) bringUpNode/orderer.sh on Device0
+run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./orderer.sh"
 
-# Join channels
-join_scripts=(
-  "mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel/orderer.sh"
-  "mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel/orderer1.sh"
-  "mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel/orderer2.sh"
-  "mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel/orderer3.sh"
-  "mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel/orderer4.sh"
-)
+# 2) bringUpNode/orderer1.sh on Device1
+run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./orderer1.sh"
 
-echo "Joining channels..."
-for i in "${!devices[@]}"; do
-  IFS=":" read -r username keyword <<< "${devices[$i]}"
-  sshpass -p "$keyword" ssh -o StrictHostKeyChecking=no $username@$i "bash ${join_scripts[$i]}"
-done
+# 3) bringUpNode/orderer2.sh on Device2
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./orderer2.sh"
 
+# 4) sudo bringUpNode/orderer3.sh on Device3
+run_cmd_on_device 3 "sudo bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/orderer3.sh"
+
+# 5) sudo bringUpNode/orderer4.sh on Device4
+run_cmd_on_device 4 "sudo bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode/orderer4.sh"
+
+# 6) bringUpNode/peer.sh in Device0
+run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./peer.sh"
+
+# 7) bringUpNode/peer1.sh in Device2
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./peer1.sh"
+
+# 8) bringUpNode/peer2.sh in Device2
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./peer2.sh"
+
+# 9) joinChannel/orderer.sh in Device0
+run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./orderer.sh"
+
+# 10) joinChannel/orderer1.sh in Device1
+run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./orderer1.sh"
+
+# 11) joinChannel/orderer2.sh in Device2
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./orderer2.sh"
+
+# 12) joinChannel/orderer3.sh in Device3
+run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./orderer3.sh"
+
+# 13) joinChannel/orderer4.sh in Device4
+run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./orderer4.sh"
+
+# 14) Wait 10 seconds
+echo -e "\n>>> Waiting 10 seconds..."
 sleep 10
 
-sshpass -p "nsd" ssh -o StrictHostKeyChecking=no nsd@192.168.50.224 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel/peer.sh"
-sshpass -p "nsd12345" ssh -o StrictHostKeyChecking=no udrt@192.168.50.230 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel/peer1.sh"
-sshpass -p "nsd12345" ssh -o StrictHostKeyChecking=no udrt@192.168.50.230 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel/peer2.sh"
+# 15) joinChannel/peer.sh in Device0
+run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./peer.sh"
 
-# Install and commit chaincode
-echo "Installing chaincode..."
-sshpass -p "nsd" ssh -o StrictHostKeyChecking=no nsd@192.168.50.224 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage/peerCCInstall.sh"
-sshpass -p "nsd12345" ssh -o StrictHostKeyChecking=no udrt@192.168.50.230 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage/peer1CCInstall.sh"
-sshpass -p "nsd12345" ssh -o StrictHostKeyChecking=no udrt@192.168.50.230 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage/peer2CCInstall.sh"
+# 16) joinChannel/peer1.sh in Device2
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./peer1.sh"
 
+# 17) joinChannel/peer2.sh in Device2
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && ./peer2.sh"
+
+# 18) CCpackage/peerCCInstall.sh in Device0
+run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && ./peerCCInstall.sh"
+
+# 19) CCpackage/peer1CCInstall.sh in Device2
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && ./peer1CCInstall.sh"
+
+# 20) CCpackage/peer2CCInstall.sh in Device2
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && ./peer2CCInstall.sh"
+
+# 21) Wait 10 seconds
+echo -e "\n>>> Waiting 10 seconds..."
 sleep 10
 
-echo "Approving chaincode..."
-sshpass -p "nsd" ssh -o StrictHostKeyChecking=no nsd@192.168.50.224 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage/approveCC.sh"
+# 22) CCpackage/approveCC.sh in Device0
+run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && ./approveCC.sh"
 
+# 23) Wait 10 seconds
+echo -e "\n>>> Waiting 10 seconds..."
 sleep 10
 
-echo "Committing chaincode..."
-sshpass -p "nsd" ssh -o StrictHostKeyChecking=no nsd@192.168.50.224 "bash mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage/commitCC.sh"
+# 24) CCpackage/commitCC.sh in Device0
+run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && ./commitCC.sh"
 
-echo "Deployment completed!"
+# 25) Wait 10 seconds
+echo -e "\n>>> Waiting 10 seconds..."
+sleep 10
+
+# -----------------------------------------------------------------------------
+# Done
+# -----------------------------------------------------------------------------
+echo ""
+echo "===================================================="
+echo " Deployment steps completed successfully!"
+echo "===================================================="
