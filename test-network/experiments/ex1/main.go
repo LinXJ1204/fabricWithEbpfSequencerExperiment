@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strconv"
 	"sync"
 	"time"
 
@@ -25,7 +26,9 @@ var gatewayPeers = [3]string{"peer0.org1.example.com", "peer1.org1.example.com",
 
 func main() {
 
-	const tpsLoading = 3000
+	param1 := os.Args[1] // First argument (should be an integer)
+	rps, _ := strconv.Atoi(param1)
+	tpsLoading := rps / 2 * 80 * 5
 
 	p0 := ContractForEachPeer(peerEndpoints[0], gatewayPeers[0])
 	p1 := ContractForEachPeer(peerEndpoints[1], gatewayPeers[1])
@@ -37,12 +40,12 @@ func main() {
 	// Launch goroutines for TPS experiment
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p0, tpsLoading, 100)
+		measureTPSTransferAssetAsync(p0, tpsLoading, rps/2)
 	}()
 
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p1, tpsLoading, 100)
+		measureTPSTransferAssetAsync(p1, tpsLoading, rps/2)
 	}()
 
 	/* 	go func() {

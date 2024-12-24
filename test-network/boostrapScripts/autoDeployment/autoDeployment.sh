@@ -190,7 +190,6 @@ echo " Deployment steps completed successfully!"
 echo "===================================================="
 
 run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/initLedger && export GO111MODULE=on && go mod tidy && go run ."
-sleep 5
 
 echo ""
 echo "===================================================="

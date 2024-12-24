@@ -12,7 +12,7 @@ import (
 var wg1 sync.WaitGroup
 
 // Function to measure TPS for asynchronous transactions (TransferAsset)
-func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int, workload uint) {
+func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int, workload int) {
 	startTime := time.Now()
 
 	errCount := 0
