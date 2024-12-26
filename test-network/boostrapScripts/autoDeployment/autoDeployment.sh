@@ -125,16 +125,16 @@ sleep 5
 
 # 9) joinChannel/orderer.sh in Device0
 run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./orderer.sh"
-
+sleep 1
 # 10) joinChannel/orderer1.sh in Device1
 run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../../../bin:$PATH && ./orderer1.sh"
-
+sleep 1
 # 11) joinChannel/orderer2.sh in Device2
 run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./orderer2.sh"
-
+sleep 1
 # 12) joinChannel/orderer3.sh in Device3
 run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../../bin:$PATH && ./orderer3.sh"
-
+sleep 1
 # 13) joinChannel/orderer4.sh in Device4
 run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../../bin:$PATH && ./orderer4.sh"
 
@@ -144,10 +144,10 @@ sleep 5
 
 # 15) joinChannel/peer.sh in Device0
 run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./peer.sh"
-
+sleep 1
 # 16) joinChannel/peer1.sh in Device2
 run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./peer1.sh"
-
+sleep 1
 # 17) joinChannel/peer2.sh in Device2
 run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./peer2.sh"
 
