@@ -15,4 +15,4 @@ mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec
 
 df -h /tmp
 
-docker network create  --driver overlay   --attachable first-network
+docker network create  --driver overlay   --attachable fabric_test

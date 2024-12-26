@@ -165,21 +165,21 @@ run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/
 
 # 21) Wait 10 seconds
 echo -e "\n>>> Waiting 10 seconds..."
-sleep 10
+sleep 3
 
 # 22) CCpackage/approveCC.sh in Device0
 run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && export PATH=../../../bin:$PATH && ./approveCC.sh"
 
 # 23) Wait 10 seconds
 echo -e "\n>>> Waiting 10 seconds..."
-sleep 10
+sleep 3
 
 # 24) CCpackage/commitCC.sh in Device0
 run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && export PATH=../../../bin:$PATH && ./commitCC.sh"
 
 # 25) Wait 10 seconds
 echo -e "\n>>> Waiting 10 seconds..."
-sleep 10
+sleep 5
 
 # -----------------------------------------------------------------------------
 # Done
