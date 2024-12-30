@@ -13,8 +13,6 @@ var wg1 sync.WaitGroup
 
 // Function to measure TPS for asynchronous transactions (TransferAsset)
 func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int, workload int) {
-	startTime := time.Now()
-
 	errCount := 0
 	txCount := 0
 	ltCount := 0
@@ -28,7 +26,7 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 		time.Sleep(time.Duration(1/float64(workload)*1000000) * time.Microsecond)
 		go func(i int) {
 			defer wg1.Done()
-			if i%100 == 0 {
+			if i%25 == 0 {
 				latency, err := createAssetWithLatency(contract, assetId)
 				if err != nil {
 					mu.Lock()
@@ -39,7 +37,6 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 					txCount++
 					ltCount++
 					totalLt += int(latency)
-					fmt.Printf("=======Transaction Average Latency: %d =======\n", totalLt/ltCount)
 					mu1.Unlock()
 				}
 			} else {
@@ -58,8 +55,5 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 	}
 
 	wg1.Wait() // Wait for all async transactions to complete
-	elapsedTime := time.Since(startTime).Seconds()
-	tps := float64(txCount) / elapsedTime
-	fmt.Printf("\nAsynchronous TransferAsset Transactions Per Second (TPS): %.2f\n", tps)
-	fmt.Printf("\nAsynchronous TransferAsset Transactions Failed: %.2f\n", errCount)
+	fmt.Printf("=======Transaction Average Latency: %d =======\n", totalLt/ltCount)
 }
