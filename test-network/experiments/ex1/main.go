@@ -85,13 +85,26 @@ func createAsset(contract *client.Contract, assetId string) error {
 func createAssetWithLatency(contract *client.Contract, assetId string) (int64, error) {
 	startTime := time.Now()
 
-	_, err := contract.SubmitTransaction("CreateAsset", assetId, "yellow", "5", "Tom", "1300")
-	if err != nil {
-		return 0, err
+	// Channel to receive the error from SubmitTransaction
+	doneCh := make(chan error, 1)
+
+	// Submit the transaction in a separate goroutine
+	go func() {
+		_, err := contract.SubmitTransaction("CreateAsset", assetId, "yellow", "5", "Tom", "1300")
+		doneCh <- err
+	}()
+
+	// Wait for either the transaction to complete or the 1s timeout
+	select {
+	case err := <-doneCh:
+		if err != nil {
+			return 0, err
+		}
+	case <-time.After(1 * time.Second):
+		return 0, fmt.Errorf("transaction timed out after 1 second")
 	}
 
 	duration := time.Since(startTime).Microseconds()
-
 	return duration, nil
 }
 

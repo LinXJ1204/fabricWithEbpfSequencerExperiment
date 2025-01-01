@@ -46,7 +46,7 @@ do
 
   # 1) Run 'go run . 2^i' on Device 0
   #    Bash doesn't support '^' for exponent, so we use $((2**i)).
-  run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex1 && export GO111MODULE=on && go mod tidy && nohup go run . $((2**i)) > ex1_run_tps_${i}.log 2>&1 &"
+  run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex1 && export GO111MODULE=on && go mod tidy && nohup go run . $((250*i)) > ex1_run_tps_${i}.log 2>&1 &"
 
   # 2) Wait 10 seconds
   echo -e "\n>>> Waiting 10 seconds..."
