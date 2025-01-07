@@ -26,6 +26,7 @@ DEVICES["1"]="192.168.50.213 nsd nsd"
 DEVICES["2"]="192.168.50.230 udrt nsd12345"
 DEVICES["3"]="192.168.50.239 nsd1235 nsd12345"
 DEVICES["4"]="192.168.50.219 nsd12345 nsd12345"
+DEVICES["5"]="192.168.50.16 nmsl777 nmsl777"
 
 # Helper function to run a command over SSH on a specific device
 run_cmd_on_device() {
@@ -97,7 +98,7 @@ echo " Step 2: Setup   "
 echo "=================="
 
 # 1) bringUpNode/orderer.sh on Device0
-run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./orderer.sh"
+#run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./orderer.sh"
 
 # 2) bringUpNode/orderer1.sh on Device1
 run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./orderer1.sh"
@@ -115,16 +116,16 @@ run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/
 run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./peer.sh"
 
 # 7) bringUpNode/peer1.sh in Device2
-run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./peer1.sh"
+run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./peer1.sh"
 
 # 8) bringUpNode/peer2.sh in Device2
-run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./peer2.sh"
+run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/bringUpNode && ./peer2.sh"
 
 echo -e "\n>>> Waiting 5 seconds..."
 sleep 5
 
 # 9) joinChannel/orderer.sh in Device0
-run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./orderer.sh"
+#run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./orderer.sh"
 sleep 1
 # 10) joinChannel/orderer1.sh in Device1
 run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../../../bin:$PATH && ./orderer1.sh"
@@ -146,10 +147,10 @@ sleep 5
 run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./peer.sh"
 sleep 1
 # 16) joinChannel/peer1.sh in Device2
-run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./peer1.sh"
+run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./peer1.sh"
 sleep 1
 # 17) joinChannel/peer2.sh in Device2
-run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./peer2.sh"
+run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./peer2.sh"
 
 echo -e "\n>>> Waiting 5 seconds..."
 sleep 5
@@ -158,10 +159,10 @@ sleep 5
 run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && export PATH=../../../bin:$PATH && ./peerCCInstall.sh"
 
 # 19) CCpackage/peer1CCInstall.sh in Device2
-run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && export PATH=../../../bin:$PATH && ./peer1CCInstall.sh"
+run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && export PATH=../../../bin:$PATH && ./peer1CCInstall.sh"
 
 # 20) CCpackage/peer2CCInstall.sh in Device2
-run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && export PATH=../../../bin:$PATH && ./peer2CCInstall.sh"
+run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/CCpackage && export PATH=../../../bin:$PATH && ./peer2CCInstall.sh"
 
 # 21) Wait 10 seconds
 echo -e "\n>>> Waiting 10 seconds..."

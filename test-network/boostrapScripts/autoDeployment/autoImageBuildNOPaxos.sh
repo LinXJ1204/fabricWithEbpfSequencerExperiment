@@ -5,6 +5,7 @@ DEVICES["1"]="192.168.50.213 nsd nsd"
 DEVICES["2"]="192.168.50.230 udrt nsd12345"
 DEVICES["3"]="192.168.50.239 nsd1235 nsd12345"
 DEVICES["4"]="192.168.50.219 nsd12345 nsd12345"
+DEVICES["5"]="192.168.50.16 nmsl777 nmsl777"
 
 # Helper function to run a command over SSH on a specific device
 run_cmd_on_device() {
@@ -56,3 +57,6 @@ run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/no
 
 # 5) sudo bringUpNode/orderer4.sh on Device4
 run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/nopaxos && git pull && make docker"
+
+# 6) sudo bringUpNode/orderer4.sh on Device4
+run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/nopaxos && git pull && make docker"

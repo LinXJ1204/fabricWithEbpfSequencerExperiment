@@ -19,6 +19,7 @@ DEVICES["1"]="192.168.50.213 nsd nsd"
 DEVICES["2"]="192.168.50.230 udrt nsd12345"
 DEVICES["3"]="192.168.50.239 nsd1235 nsd12345"
 DEVICES["4"]="192.168.50.219 nsd12345 nsd12345"
+DEVICES["5"]="192.168.50.16 nmsl777 nmsl777"
 
 # -----------------------------------------------------------------------------
 # Helper function to run a command via SSH on a specific device
@@ -53,7 +54,7 @@ do
   sleep 10
 
   # 3) Run 'go run .' in TPSmeasure folder on Device 2
-  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/TPSmeasure && nohup go run . > ex1_run_latency_${i}.log 2>&1 &"
+  run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/TPSmeasure && nohup go run . > ex1_run_latency_${i}.log 2>&1 &"
 
   # 4) Wait 4 minutes
   echo -e "\n>>> Waiting 4 minutes..."
