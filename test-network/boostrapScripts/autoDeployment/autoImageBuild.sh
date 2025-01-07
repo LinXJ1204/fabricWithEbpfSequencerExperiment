@@ -44,19 +44,19 @@ echo " Step 2: Setup   "
 echo "=================="
 
 # 1) bringUpNode/orderer.sh on Device0
-run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && make docker"
+run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && git pull && make docker"
 
 # 2) bringUpNode/orderer1.sh on Device1
-run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && make docker"
+run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && git pull && make docker"
 
 # 3) bringUpNode/orderer2.sh on Device2
-run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && make docker"
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && git pull && make docker"
 
 # 4) sudo bringUpNode/orderer3.sh on Device3
-run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && make docker"
+run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && git pull && make docker"
 
 # 5) sudo bringUpNode/orderer4.sh on Device4
-run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && make docker"
+run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && git pull && make docker"
 
 # 6) sudo bringUpNode/orderer4.sh on Device4
-run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && make docker"
+run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && git pull && make docker"
