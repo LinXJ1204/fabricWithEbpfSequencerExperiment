@@ -47,14 +47,14 @@ do
 
   # 1) Run 'go run . 2^i' on Device 0
   #    Bash doesn't support '^' for exponent, so we use $((2**i)).
-  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex1 && export GO111MODULE=on && go mod tidy && nohup go run . $((250*i)) > ex1_run_tps_${i}.log 2>&1 &"
+  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex1 && export GO111MODULE=on && go mod tidy && nohup go run . $((250*i)) > ex1_run_latency_${i}.log 2>&1 &"
 
   # 2) Wait 10 seconds
   echo -e "\n>>> Waiting 10 seconds..."
   sleep 10
 
   # 3) Run 'go run .' in TPSmeasure folder on Device 2
-  run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/TPSmeasure && nohup go run . > ex1_run_latency_${i}.log 2>&1 &"
+  run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/TPSmeasure && nohup go run . > ex1_run_tps_${i}.log 2>&1 &"
 
   # 4) Wait 4 minutes
   echo -e "\n>>> Waiting 4 minutes..."

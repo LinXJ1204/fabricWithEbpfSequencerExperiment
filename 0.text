@@ -16,3 +16,15 @@ mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec
 df -h /tmp
 
 docker network create  --driver overlay   --attachable fabric_test
+
+
+Sequencer:
+5c:92:5e:d7:6a:bd => 192.168.50.182 => 7072
+Orderer0:
+9c:2d:cd:3f:67:a4 => 192.168.50.224 => 7073
+Orderer1:
+9c:2d:cd:48:b1:04 => 192.168.50.213 => 8073
+Orderer2:
+28:16:ad:ec:06:a8 => 192.168.50.239 => 9073
+Orderer3:
+04:6c:59:65:70:20 => 192.168.50.219 => 10073
