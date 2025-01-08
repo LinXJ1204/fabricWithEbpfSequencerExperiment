@@ -43,14 +43,14 @@ echo "=================="
 echo " Step 2: Setup   "
 echo "=================="
 
-run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && make docker"
+run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencer && git fetch && git checkout feat/baselineV0 && make docker"
 
-run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && make docker"
+run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencer && git fetch && git checkout feat/baselineV0 && make docker"
 
-run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && make docker"
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencer && git fetch && git checkout feat/baselineV0 && make docker"
 
-run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && make docker"
+run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencer && git fetch && git checkout feat/baselineV0 && make docker"
 
-run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && make docker"
+run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencer && git fetch && git checkout feat/baselineV0 && make docker"
 
-run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/baseline && make docker"
+run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencer && git fetch && git checkout feat/baselineV0 && make docker"
