@@ -5,6 +5,7 @@ DEVICES["1"]="192.168.50.213 nsd nsd"
 DEVICES["2"]="192.168.50.230 udrt nsd12345"
 DEVICES["3"]="192.168.50.239 nsd1235 nsd12345"
 DEVICES["4"]="192.168.50.219 nsd12345 nsd12345"
+DEVICES["5"]="192.168.50.184 nsd02 nsd12345"
 
 # Helper function to run a command over SSH on a specific device
 run_cmd_on_device() {
@@ -42,17 +43,14 @@ echo "=================="
 echo " Step 2: Setup   "
 echo "=================="
 
-# 1) bringUpNode/orderer.sh on Device0
 run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/nopaxos && git pull && make docker"
 
-# 2) bringUpNode/orderer1.sh on Device1
 run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/nopaxos && git pull && make docker"
 
-# 3) bringUpNode/orderer2.sh on Device2
 run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/nopaxos && git pull && make docker"
 
-# 4) sudo bringUpNode/orderer3.sh on Device3
 run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/nopaxos && git pull && make docker"
 
-# 5) sudo bringUpNode/orderer4.sh on Device4
 run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/nopaxos && git pull && make docker"
+
+run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/nopaxos && git pull && make docker"
