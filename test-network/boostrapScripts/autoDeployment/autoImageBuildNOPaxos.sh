@@ -1,11 +1,12 @@
 # Each entry:  DeviceIndex => "IPAddress Username Password"
 declare -A DEVICES
-DEVICES["0"]="192.168.50.224 nsd nsd"
-DEVICES["1"]="192.168.50.213 nsd nsd"
-DEVICES["2"]="192.168.50.230 udrt nsd12345"
-DEVICES["3"]="192.168.50.239 nsd1235 nsd12345"
-DEVICES["4"]="192.168.50.219 nsd12345 nsd12345"
-DEVICES["5"]="192.168.50.184 nsd02 nsd12345"
+DEVICES["0"]="192.168.50.224 nsd nsd" #P_0
+DEVICES["1"]="192.168.50.213 nsd nsd" #P_1, P_2
+DEVICES["2"]="192.168.50.230 udrt nsd12345" #O_1
+DEVICES["5"]="192.168.50.184 nsd02 nsd12345" #seq
+DEVICES["3"]="192.168.50.239 nsd1235 nsd12345" #O_0
+DEVICES["4"]="192.168.50.219 nsd12345 nsd12345" #O_2
+DEVICES["6"]="192.168.50.182 nsd12345 nsd12345" #O_3
 
 # Helper function to run a command over SSH on a specific device
 run_cmd_on_device() {
@@ -54,3 +55,5 @@ run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/no
 run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/nopaxos && git pull && make docker"
 
 run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/nopaxos && git pull && make docker"
+
+run_cmd_on_device 6 "cd mainPlan/fabricWithEbpfSequencer && git checkout feat/nopaxos && git pull && make docker"
