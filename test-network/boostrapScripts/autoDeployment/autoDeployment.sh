@@ -127,10 +127,10 @@ echo -e "\n>>> Waiting 5 seconds..."
 sleep 5
 
 # 9) joinChannel/orderer.sh in Device0
-run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./orderer.sh"
+run_cmd_on_device 3 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../../bin:$PATH && ./orderer.sh"
 sleep 1
 # 10) joinChannel/orderer1.sh in Device1
-run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../../../bin:$PATH && ./orderer1.sh"
+run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../bin:$PATH && ./orderer1.sh"
 sleep 1
 # 11) joinChannel/orderer2.sh in Device2
 run_cmd_on_device 4 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/joinChannel && export PATH=../../../../bin:$PATH && ./orderer2.sh"
