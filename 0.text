@@ -39,3 +39,11 @@ DEVICES["5"]="192.168.50.184 nsd02 nsd12345" #seq
 DEVICES["3"]="192.168.50.239 nsd1235 nsd12345" #O_0
 DEVICES["4"]="192.168.50.219 nsd12345 nsd12345" #O_2
 DEVICES["6"]="192.168.50.182 nsd12345 nsd12345" #O_3
+
+3 peers in two laptops Intel i7-12700H CPU, 16GB memory
+orderer 1 in laptop i5-13500HX CPU, 16GB memory
+orderer 2 in laptop i7-7500U CPU, 8GB memory
+orderer 3 in laptop i7-10750H CPU, 16GB memory
+orderer 4 in laptop i7-9750H CPU, 32GB memory
+
+Sequencer in laptop i5-13500HX CPU, 16GB memory
