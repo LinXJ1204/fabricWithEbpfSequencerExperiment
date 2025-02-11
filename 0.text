@@ -17,8 +17,22 @@ df -h /tmp
 
 docker network create  --driver overlay   --attachable fabric_test
 
-sudo tc qdisc add dev enp109s0 root handle 1: pfifo limit 1000000
-sudo ./tc_v28 enp109s0
+cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec/exp
+sudo tc qdisc add dev enp109s0 root handle 1: pfifo limit 10000
+sudo ./tc enp109s0
+
+cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec
+sudo tc qdisc add dev enp109s0 root handle 1: pfifo limit 5000
+sudo ./tc_TTL_version enp109s0
+
+sudo tc qdisc del dev enp109s0 root
+sudo tc qdisc add dev enp109s0 root handle 1: pfifo limit 10000
+sudo ./tc_TTL_version enp109s0
+
+sudo tc qdisc del dev enp109s0 root
+sudo tc qdisc add dev enp109s0 root handle 1: pfifo limit 5000
+sudo ./tc enp109s0
+
 
 Sequencer:
 74:d4:dd:2c:b1:ff => 192.168.50.184 7072
@@ -47,3 +61,5 @@ orderer 3 in laptop i7-10750H CPU, 16GB memory
 orderer 4 in laptop i7-9750H CPU, 32GB memory
 
 Sequencer in laptop i5-13500HX CPU, 16GB memory
+
+unable to broadcast a message to a host multiple times, packets would conflict.
