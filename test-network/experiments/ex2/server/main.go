@@ -24,19 +24,25 @@ func main() {
 	}
 	defer conn.Close()
 
-	ticker := time.NewTicker(5 * time.Minute)
+	timeout := make(chan bool, 1)
+	go func() {
+		time.Sleep(5 * time.Minute)
+		timeout <- true
+	}()
+
 	// Buffer to receive packets
 	buffer := make([]byte, 10000)
 
 	for {
 		select {
-		case <-ticker.C:
+		case <-timeout:
 			// Calculate average latency
 			avgLatency := 0.0
 			if totalRequests > 0 {
 				avgLatency = float64(totalLatency) / float64(totalRequests)
 			}
 			fmt.Printf("Avg Latency: %.2f µs\n", avgLatency)
+			return
 		default:
 			// Read UDP packet
 			n, addr, err := conn.ReadFrom(buffer)

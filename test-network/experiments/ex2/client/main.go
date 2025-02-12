@@ -15,10 +15,14 @@ func main() {
 	rps, _ := strconv.Atoi(param1)
 	msgNum := rps * 60 * 3
 
-	ticker := time.NewTicker(5 * time.Minute)
-
 	param2 := os.Args[2] // First argument (should be an integer)
 	msgSize, _ := strconv.Atoi(param2)
+
+	timeout := make(chan bool, 1)
+	go func() {
+		time.Sleep(4 * time.Minute)
+		timeout <- true
+	}()
 
 	// UDP target address
 	destAddr := "192.168.50.184:7072" // Replace with the actual target address and port
@@ -47,11 +51,10 @@ func main() {
 
 	for i := 0; i < msgNum; i++ {
 		select {
-		case <-ticker.C:
+		case <-timeout:
 			fmt.Printf("Total txs sent: %d \n", i)
-			i = msgNum
+			return
 		default:
-			time.Sleep(time.Duration(1/float64(rps)*1000000) * time.Microsecond)
 			go func(i int) {
 				packet := make([]byte, msgSize)
 
@@ -72,6 +75,7 @@ func main() {
 					fmt.Println("Error sending UDP packet:", err)
 				}
 			}(i)
+			time.Sleep(time.Duration(1/float64(rps)*1000000) * time.Microsecond)
 		}
 	}
 }
