@@ -23,6 +23,12 @@ DEVICES["3"]="192.168.50.239 nsd1235 nsd12345" #O_0
 DEVICES["4"]="192.168.50.219 nsd12345 nsd12345" #O_2
 DEVICES["6"]="192.168.50.182 nsd12345 nsd12345" #O_3
 
+declare -A tc_progarms
+tc_progarms["1"]="tc_LRU_1node"
+tc_progarms["2"]="tc_LRU_2nodes"
+tc_progarms["3"]="tc_LRU_3nodes"
+tc_progarms["4"]="tc"
+tc_progarms["5"]="tc_LRU_5nodes"
 
 # -----------------------------------------------------------------------------
 # Helper function to run a command via SSH on a specific device
@@ -42,18 +48,19 @@ run_cmd_on_device() {
 # -----------------------------------------------------------------------------
 # Main experiment loop
 # -----------------------------------------------------------------------------
-for ((t=1; t<=1; t++))
+for ((t=1; t<=4; t++))
 do
   echo -e "\n============================================="
   echo "Starting Experiment for node count = $t"
   echo "============================================="
+  program=${tc_progarms[$t]}
   IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
     sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
       "echo '$pass' | sudo -S tc qdisc add dev enp109s0 root handle 1: pfifo limit 10000 && \
       cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec/exp && \
-      nohup echo '$pass' | sudo -S timeout 3 ./tc_LRU_5nodes enp109s0"
+      nohup echo '$pass' | sudo -S timeout 3 ./$program enp109s0"
 
-  for ((i=6; i<=12; i++))
+  for ((i=6; i<=13; i++))
   do
   echo -e "\n============================================="
   echo "Starting Experiment for node = $i"
@@ -72,7 +79,7 @@ do
   echo "Done iteration $t."
   IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
     sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
-      "echo '$pass' | sudo -S reboot"
+      "nohup echo '$pass' | sudo -S reboot 2>&1 &"
 
   sleep 150
 

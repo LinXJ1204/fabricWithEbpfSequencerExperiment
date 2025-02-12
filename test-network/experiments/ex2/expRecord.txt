@@ -55,3 +55,11 @@ Message size: 3200 bytes
 3 nodes Endhost in RPS 3000: Avg Latency: 430.21 µs
 2 nodes Endhost in RPS 3000: Avg Latency: 395.91 µs
 1 nodes Endhost in RPS 3000: Avg Latency: 364.85 µs
+
+5 nodes LRU:
+64 => Avg Latency: 204.42 µs
+128 => Avg Latency: 204.42 µs
+256 => Avg Latency: 210.33 µs
+512 => Avg Latency: 222.75 µs
+1024 => Avg Latency: 244.59 µs
+2048 => Avg Latency: 296.67 µs
