@@ -47,13 +47,31 @@ do
   echo -e "\n============================================="
   echo "Starting Experiment for node count = $t"
   echo "============================================="
-  run_cmd_on_device 5 "tc qdisc add dev enp109s0 root handle 1: pfifo limit 10000 && cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec/exp && nohup ./tc_LRU_5nodes enp109s0 2>&1 &"
+  IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
+    sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
+      "echo '$pass' | sudo tc qdisc add dev enp109s0 root handle 1: pfifo limit 10000 && \
+      cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec/exp && \
+      nohup echo '$pass' | sudo ./tc_LRU_5nodes enp109s0 2>&1 &"
+
+  for ((i=6; i<=12; i++))
+  do
+  echo -e "\n============================================="
+  echo "Starting Experiment for node = $i"
+  echo "============================================="
+
+  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/server && export GO111MODULE=on && go mod tidy && nohup go run . 3000 $((2**i)) > eBPF_sequencer_latency_${t}_node_$((2**i))_size.log 2>&1 &"
+  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/client && export GO111MODULE=on && go mod tidy && nohup go run . 3000 $((2**i)) 2>&1 &"
+
+  echo -e "\n>>> Waiting 5 minutes..."
+  sleep 300
+
+  done
 
   sleep 60
 
   echo "Done iteration $t."
   run_cmd_on_device 5 "reboot 2>&1 &"
-  sleep 60
+  sleep 150
 
 done
 
