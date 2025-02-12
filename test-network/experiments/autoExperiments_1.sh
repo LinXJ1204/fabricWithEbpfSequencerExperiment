@@ -59,8 +59,8 @@ do
   echo "Starting Experiment for node = $i"
   echo "============================================="
 
-  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/server && export GO111MODULE=on && go mod tidy && nohup go run . 3000 $((2**i)) > eBPF_sequencer_latency_${t}_node_$((2**i))_size.log 2>&1 &"
-  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/client && export GO111MODULE=on && go mod tidy && nohup go run . 3000 $((2**i)) 2>&1 &"
+  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/server && export GO111MODULE=on && go mod tidy && nohup go run . > eBPF_sequencer_latency_${t}_node_$((2**i))_size.log 2>&1 &"
+  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/client && export GO111MODULE=on && go mod tidy && nohup go run . 3000 $((2**i)) > text.log 2>&1 &"
 
   echo -e "\n>>> Waiting 5 minutes..."
   sleep 300
