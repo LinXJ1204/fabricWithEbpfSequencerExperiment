@@ -49,9 +49,9 @@ do
   echo "============================================="
   IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
     sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
-      "echo '$pass' | sudo tc qdisc add dev enp109s0 root handle 1: pfifo limit 10000 && \
+      "echo '$pass' | sudo -S tc qdisc add dev enp109s0 root handle 1: pfifo limit 10000 && \
       cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec/exp && \
-      nohup echo '$pass' | sudo ./tc_LRU_5nodes enp109s0 2>&1 &"
+      nohup echo '$pass' | sudo -S ./tc_LRU_5nodes enp109s0 2>&1 &"
 
   for ((i=6; i<=12; i++))
   do
