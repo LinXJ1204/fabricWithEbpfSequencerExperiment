@@ -30,9 +30,14 @@ sudo tc qdisc add dev enp109s0 root handle 1: pfifo limit 10000
 sudo ./tc_TTL_version enp109s0
 
 sudo tc qdisc del dev enp109s0 root
-sudo tc qdisc add dev enp109s0 root handle 1: pfifo limit 5000
+sudo tc qdisc add dev enp109s0 root handle 1: pfifo limit 10000
 sudo ./tc enp109s0
 
+
+cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec/exp
+sudo tc qdisc del dev enp109s0 root
+sudo tc qdisc add dev enp109s0 root handle 1: pfifo limit 10000
+sudo ./tc_LRU_5nodes enp109s0
 
 Sequencer:
 74:d4:dd:2c:b1:ff => 192.168.50.184 7072

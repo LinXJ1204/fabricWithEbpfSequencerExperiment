@@ -13,7 +13,12 @@ import (
 func main() {
 	param1 := os.Args[1] // First argument (should be an integer)
 	rps, _ := strconv.Atoi(param1)
-	msgNum := rps / 2 * 60 * 3
+	msgNum := rps * 60 * 3
+
+	ticker := time.NewTicker(5 * time.Minute)
+
+	param2 := os.Args[2] // First argument (should be an integer)
+	msgSize, _ := strconv.Atoi(param2)
 
 	// UDP target address
 	destAddr := "192.168.50.184:7072" // Replace with the actual target address and port
@@ -41,27 +46,33 @@ func main() {
 	}
 
 	for i := 0; i < msgNum; i++ {
-		time.Sleep(time.Duration(1/float64(rps)*1000000) * time.Microsecond)
-		// Prepare packet data (3200 bytes)
-		packet := make([]byte, 3200)
+		select {
+		case <-ticker.C:
+			fmt.Printf("Total txs sent: %d \n", i)
+			i = msgNum
+		default:
+			time.Sleep(time.Duration(1/float64(rps)*1000000) * time.Microsecond)
+			go func(i int) {
+				packet := make([]byte, msgSize)
 
-		// Get current timestamp (nanoseconds)
-		timestamp := time.Now().UnixNano()
+				// Get current timestamp (nanoseconds)
+				timestamp := time.Now().UnixNano()
 
-		// Encode timestamp in the first 8 bytes
-		binary.BigEndian.PutUint64(packet[:8], uint64(timestamp))
+				// Encode timestamp in the first 8 bytes
+				binary.BigEndian.PutUint64(packet[2:10], uint64(timestamp))
 
-		// Fill remaining bytes with dummy data
-		for i := 8; i < len(packet); i++ {
-			packet[i] = byte(i % 256)
+				// Fill remaining bytes with dummy data
+				for i := 10; i < len(packet); i++ {
+					packet[i] = byte(i % 256)
+				}
+
+				// Send packet
+				_, err = conn.Write(packet)
+				if err != nil {
+					fmt.Println("Error sending UDP packet:", err)
+				}
+			}(i)
 		}
-
-		// Send packet
-		_, err = conn.Write(packet)
-		if err != nil {
-			fmt.Println("Error sending UDP packet:", err)
-		}
-		fmt.Println("UDP packet of size 3200 bytes sent successfully with TTL 171 and timestamp", timestamp)
 	}
 }
 

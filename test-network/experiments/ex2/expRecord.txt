@@ -1,0 +1,57 @@
+
+5 nodes LRU TCB-100000 in RPS 3000: Avg Latency: 3698944.41 µs
+4 nodes LRU TCB-100000 in RPS 3000: Requests/sec: 2411 | Avg Latency: 79793.73 µs
+
+
+5 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 643887.40 µs
+4 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 545106.25 µs
+3 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 83710.31 µs
+2 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 82760.68 µs
+1 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 81915.11 µs
+
+4 nodes Endhost in RPS 3000: Avg Latency: 132098.01 µs
+3 nodes Endhost in RPS 3000: Avg Latency: 132676.92 µs
+3 nodes Endhost in RPS 3000: Avg Latency: 133408.79 µs
+1 nodes Endhost in RPS 3000: Avg Latency: 134583.42 µs
+
+
+Bigger TC buffer => Larger Latency => because of packet queue in buffer and smaller one drop packet directly
+
+Message size: 32 bytes
+5 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 218.28 µs
+4 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 218.99 µs
+3 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 223.30 µs
+2 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 220.81 µs
+1 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 218.70 µs
+
+5 nodes Endhost in RPS 3000: Avg Latency: 340.24 µs
+4 nodes Endhost in RPS 3000: Avg Latency: 319.24 µs
+3 nodes Endhost in RPS 3000: Avg Latency: 315.50 µs
+2 nodes Endhost in RPS 3000: Avg Latency: 297.64 µs
+1 nodes Endhost in RPS 3000: Avg Latency: 291.46 µs
+
+Message size: 1200 bytes
+5 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 256.57 µs
+4 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 260.28 µs
+3 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 258.64 µs
+2 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 255.23 µs
+1 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 250.18 µs
+
+5 nodes Endhost in RPS 3000: Avg Latency: 368.92 µs
+4 nodes Endhost in RPS 3000: Avg Latency: 339.17 µs
+3 nodes Endhost in RPS 3000: Avg Latency: 320.01 µs
+2 nodes Endhost in RPS 3000: Avg Latency: 312.39 µs
+1 nodes Endhost in RPS 3000: Avg Latency: 302.82 µs
+
+Message size: 3200 bytes
+5 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 368.61 µs
+4 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 346.02 µs
+3 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 325.31 µs
+2 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 317.21 µs
+1 nodes LRU TCB-10000 in RPS 3000: Avg Latency: 293.13 µs
+
+5 nodes Endhost in RPS 3000: Avg Latency: 473.68 µs
+4 nodes Endhost in RPS 3000: Avg Latency: 473.37 µs
+3 nodes Endhost in RPS 3000: Avg Latency: 430.21 µs
+2 nodes Endhost in RPS 3000: Avg Latency: 395.91 µs
+1 nodes Endhost in RPS 3000: Avg Latency: 364.85 µs
