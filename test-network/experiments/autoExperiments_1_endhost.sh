@@ -53,7 +53,9 @@ do
   echo -e "\n============================================="
   echo "Starting Experiment for node count = $t"
   echo "============================================="
-  run_cmd_on_device 2 "cd mmainPlan/fabricWithEbpfSequencer/sequencer && export GO111MODULE=on && go mod tidy && nohup go run . $t > t.log 2>&1 &"
+  run_cmd_on_device 5 "cd mmainPlan/fabricWithEbpfSequencer/sequencer && export GO111MODULE=on && go mod tidy && nohup go run . ${t} > t.log 2>&1 &"
+
+  sleep 10
 
   for ((i=6; i<=12; i++))
   do
