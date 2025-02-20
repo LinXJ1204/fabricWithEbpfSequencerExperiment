@@ -24,11 +24,11 @@ DEVICES["4"]="192.168.50.219 nsd12345 nsd12345" #O_2
 DEVICES["6"]="192.168.50.182 nsd12345 nsd12345" #O_3
 
 declare -A tc_progarms
-tc_progarms["1"]="tc_LRU_1_nodes"
-tc_progarms["2"]="tc_LRU_2_nodes"
-tc_progarms["3"]="tc_LRU_3_nodes"
+tc_progarms["1"]="tc_LRU_1node"
+tc_progarms["2"]="tc_LRU_2nodes"
+tc_progarms["3"]="tc_LRU_3nodes"
 tc_progarms["4"]="tc"
-tc_progarms["5"]="tc_LRU_5_nodes"
+tc_progarms["5"]="tc_LRU_5nodes"
 
 # -----------------------------------------------------------------------------
 # Helper function to run a command via SSH on a specific device
@@ -48,7 +48,7 @@ run_cmd_on_device() {
 # -----------------------------------------------------------------------------
 # Main experiment loop
 # -----------------------------------------------------------------------------
-for ((t=0; t<=4; t++))
+for ((t=1; t<=5; t++))
 do
   echo -e "\n============================================="
   echo "Starting Experiment for node count = $t"
