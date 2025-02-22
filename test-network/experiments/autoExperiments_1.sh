@@ -53,15 +53,19 @@ do
   echo -e "\n============================================="
   echo "Starting Experiment for node count = $t"
   echo "============================================="
+
+  for ((i=5; i<=12; i++))
+  do
+
   program=${tc_progarms[$t]}
   IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
     sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
       "echo '$pass' | sudo -S tc qdisc add dev enp109s0 root handle 1: pfifo limit 10000 && \
       cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec/exp && \
       nohup echo '$pass' | sudo -S timeout 3 ./$program enp109s0"
+  echo -e "\n>>> Waiting 5 seconds..."
+  sleep 5
 
-  for ((i=1; i<=12; i++))
-  do
   echo -e "\n============================================="
   echo "Starting Experiment for node = $i"
   echo "============================================="
@@ -80,16 +84,6 @@ do
   sleep 150
 
   done
-
-  sleep 60
-
-  echo "Done iteration $t."
-  IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
-    sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
-      "nohup echo '$pass' | sudo -S reboot 2>&1 &"
-
-  sleep 150
-
 done
 
 # -----------------------------------------------------------------------------
