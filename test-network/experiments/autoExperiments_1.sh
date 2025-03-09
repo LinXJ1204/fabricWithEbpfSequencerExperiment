@@ -30,6 +30,14 @@ tc_progarms["3"]="tc_LRU_3nodes"
 tc_progarms["4"]="tc"
 tc_progarms["5"]="tc_LRU_5nodes"
 
+declare -A tc_bufferSize
+tc_bufferSize["1"]="5000"
+tc_bufferSize["2"]="10000"
+tc_bufferSize["3"]="15000"
+tc_bufferSize["4"]="20000"
+tc_bufferSize["5"]="25000"
+tc_bufferSize["5"]="30000"
+
 # -----------------------------------------------------------------------------
 # Helper function to run a command via SSH on a specific device
 # -----------------------------------------------------------------------------
@@ -54,13 +62,14 @@ do
   echo "Starting Experiment for node count = $t"
   echo "============================================="
 
-  for ((i=5; i<=12; i++))
+  for ((i=1; i<=5; i++))
   do
 
   program=${tc_progarms[$t]}
+  tcBufferSize=${tc_bufferSize[$i]}
   IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
     sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
-      "echo '$pass' | sudo -S tc qdisc add dev enp109s0 root handle 1: pfifo limit 10000 && \
+      "echo '$pass' | sudo -S tc qdisc add dev enp109s0 root handle 1: pfifo limit '$tcBufferSize' && \
       cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec/exp && \
       nohup echo '$pass' | sudo -S timeout 3 ./$program enp109s0"
   echo -e "\n>>> Waiting 5 seconds..."
@@ -70,9 +79,9 @@ do
   echo "Starting Experiment for node = $i"
   echo "============================================="
 
-  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/server && export GO111MODULE=on && go mod tidy && nohup go run . > eBPF_sequencer_LT_'$program'_$((2**i))_size.log 2>&1 &"
-  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/client && export GO111MODULE=on && go mod tidy && nohup go run . 3000 $((2**i)) > text.log 2>&1 &"
-  run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments && nohup ./udpDropDetect.sh eBPF_LT_'$program'_$((2**i)) > text.log 2>&1 &"
+  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/server && export GO111MODULE=on && go mod tidy && nohup go run . > eBPF_sequencer_LT_tcBuffer_'$program'_4096_size.log 2>&1 &"
+  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/client && export GO111MODULE=on && go mod tidy && nohup go run . 3000 4096 > text.log 2>&1 &"
+  run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments && nohup ./udpDropDetect.sh eBPF_LT_'$program'_'$tcBufferSize' > text.log 2>&1 &"
 
   echo -e "\n>>> Waiting 5 minutes..."
   sleep 660
