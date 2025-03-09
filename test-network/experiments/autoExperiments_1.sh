@@ -31,12 +31,16 @@ tc_progarms["4"]="tc"
 tc_progarms["5"]="tc_LRU_5nodes"
 
 declare -A tc_bufferSize
-tc_bufferSize["1"]="5000"
-tc_bufferSize["2"]="10000"
-tc_bufferSize["3"]="15000"
-tc_bufferSize["4"]="20000"
-tc_bufferSize["5"]="25000"
-tc_bufferSize["5"]="30000"
+tc_bufferSize["1"]="1000"
+tc_bufferSize["2"]="2000"
+tc_bufferSize["3"]="3000"
+tc_bufferSize["4"]="4000"
+tc_bufferSize["5"]="5000"
+tc_bufferSize["6"]="10000"
+tc_bufferSize["7"]="15000"
+tc_bufferSize["8"]="20000"
+tc_bufferSize["9"]="25000"
+tc_bufferSize["10"]="30000"
 
 # -----------------------------------------------------------------------------
 # Helper function to run a command via SSH on a specific device
@@ -62,7 +66,7 @@ do
   echo "Starting Experiment for node count = $t"
   echo "============================================="
 
-  for ((i=1; i<=5; i++))
+  for ((i=1; i<=10; i++))
   do
 
   program=${tc_progarms[$t]}
