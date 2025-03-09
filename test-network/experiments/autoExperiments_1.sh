@@ -41,6 +41,16 @@ tc_bufferSize["7"]="15000"
 tc_bufferSize["8"]="20000"
 tc_bufferSize["9"]="25000"
 tc_bufferSize["10"]="30000"
+tc_bufferSize["11"]="35000"
+tc_bufferSize["12"]="40000"
+tc_bufferSize["13"]="45000"
+tc_bufferSize["14"]="50000"
+tc_bufferSize["15"]="100000"
+tc_bufferSize["16"]="200000"
+tc_bufferSize["17"]="300000"
+tc_bufferSize["18"]="400000"
+tc_bufferSize["19"]="500000"
+tc_bufferSize["20"]="1000000"
 
 # -----------------------------------------------------------------------------
 # Helper function to run a command via SSH on a specific device
@@ -66,7 +76,7 @@ do
   echo "Starting Experiment for node count = $t"
   echo "============================================="
 
-  for ((i=1; i<=10; i++))
+  for ((i=1; i<=20; i++))
   do
 
   program=${tc_progarms[$t]}
@@ -83,7 +93,7 @@ do
   echo "Starting Experiment for node = $i"
   echo "============================================="
 
-  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/server && export GO111MODULE=on && go mod tidy && nohup go run . > eBPF_sequencer_LT_tcBuffer_'$program'_4096_size.log 2>&1 &"
+  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/server && export GO111MODULE=on && go mod tidy && nohup go run . > eBPF_sequencer_LT_tcBuffer_'$program'_4096_size'$tcBufferSize'.log 2>&1 &"
   run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/client && export GO111MODULE=on && go mod tidy && nohup go run . 3000 4096 > text.log 2>&1 &"
   run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments && nohup ./udpDropDetect.sh eBPF_LT_'$program'_'$tcBufferSize' > text.log 2>&1 &"
 
