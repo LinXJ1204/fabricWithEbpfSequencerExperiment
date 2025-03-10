@@ -70,43 +70,46 @@ run_cmd_on_device() {
 # -----------------------------------------------------------------------------
 # Main experiment loop
 # -----------------------------------------------------------------------------
-for ((t=5; t<=5; t++))
+for ((s=1; s<=10; s++))
 do
-  echo -e "\n============================================="
-  echo "Starting Experiment for node count = $t"
-  echo "============================================="
-
-  for ((i=1; i<=20; i++))
+  for ((t=5; t<=5; t++))
   do
+    echo -e "\n============================================="
+    echo "Starting Experiment for node count = $t"
+    echo "============================================="
 
-  program=${tc_progarms[$t]}
-  tcBufferSize=${tc_bufferSize[$i]}
-  IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
-    sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
-      "echo '$pass' | sudo -S tc qdisc add dev enp109s0 root handle 1: pfifo limit '$tcBufferSize' && \
-      cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec/exp && \
-      nohup echo '$pass' | sudo -S timeout 3 ./$program enp109s0"
-  echo -e "\n>>> Waiting 5 seconds..."
-  sleep 5
+    for ((i=1; i<=20; i++))
+    do
 
-  echo -e "\n============================================="
-  echo "Starting Experiment for node = $i"
-  echo "============================================="
+    program=${tc_progarms[$t]}
+    tcBufferSize=${tc_bufferSize[$i]}
+    IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
+      sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
+        "echo '$pass' | sudo -S tc qdisc add dev enp109s0 root handle 1: pfifo limit '$tcBufferSize' && \
+        cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec/exp && \
+        nohup echo '$pass' | sudo -S timeout 3 ./$program enp109s0"
+    echo -e "\n>>> Waiting 5 seconds..."
+    sleep 5
 
-  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/server && export GO111MODULE=on && go mod tidy && nohup go run . > eBPF_sequencer_LT_tcBuffer_'$program'_4096_size'$tcBufferSize'.log 2>&1 &"
-  run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/client && export GO111MODULE=on && go mod tidy && nohup go run . 3000 4096 > text.log 2>&1 &"
-  run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments && nohup ./udpDropDetect.sh eBPF_LT_'$program'_'$tcBufferSize' > text.log 2>&1 &"
+    echo -e "\n============================================="
+    echo "Starting Experiment for node = $i"
+    echo "============================================="
 
-  echo -e "\n>>> Waiting 5 minutes..."
-  sleep 660
+    run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/server && export GO111MODULE=on && go mod tidy && nohup go run . > eBPF_sequencer_LT_tcBuffer_'$program'_4096_size'$tcBufferSize'_no_'$s'.log 2>&1 &"
+    run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/client && export GO111MODULE=on && go mod tidy && nohup go run . 3000 4096 > text.log 2>&1 &"
+    run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments && nohup ./udpDropDetect.sh eBPF_LT_'$program'_'$tcBufferSize'_no_'$s' > text.log 2>&1 &"
 
-  echo "Done iteration $t."
-  IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
-    sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
-      "nohup echo '$pass' | sudo -S reboot 2>&1 &"
+    echo -e "\n>>> Waiting 5 minutes..."
+    sleep 660
 
-  sleep 150
+    echo "Done iteration $t."
+    IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
+      sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
+        "nohup echo '$pass' | sudo -S reboot 2>&1 &"
 
+    sleep 150
+
+    done
   done
 done
 
