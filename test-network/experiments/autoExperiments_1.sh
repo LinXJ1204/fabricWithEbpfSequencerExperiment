@@ -70,7 +70,7 @@ run_cmd_on_device() {
 # -----------------------------------------------------------------------------
 # Main experiment loop
 # -----------------------------------------------------------------------------
-for ((s=1; s<=10; s++))
+for ((s=10; s<=14; s++))
 do
   for ((t=5; t<=5; t++))
   do
@@ -78,7 +78,7 @@ do
     echo "Starting Experiment for node count = $t"
     echo "============================================="
 
-    for ((i=1; i<=20; i++))
+    for ((i=6; i<=6; i++))
     do
 
     program=${tc_progarms[$t]}
@@ -99,8 +99,8 @@ do
     run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/client && export GO111MODULE=on && go mod tidy && nohup go run . 3000 4096 > text.log 2>&1 &"
     run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments && nohup ./udpDropDetect.sh eBPF_LT_'$program'_'$tcBufferSize'_no_'$s' > text.log 2>&1 &"
 
-    echo -e "\n>>> Waiting 5 minutes..."
-    sleep 660
+    echo -e "\n>>> Waiting 60 minutes..."
+    sleep 3660
 
     echo "Done iteration $t."
     IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
