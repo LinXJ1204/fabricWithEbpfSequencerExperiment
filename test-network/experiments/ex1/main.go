@@ -28,7 +28,7 @@ func main() {
 
 	param1 := os.Args[1] // First argument (should be an integer)
 	rps, _ := strconv.Atoi(param1)
-	tpsLoading := rps / 2 * 60 * 3
+	tpsLoading := rps / 2 * 60 * 2
 
 	p0 := ContractForEachPeer(peerEndpoints[0], gatewayPeers[0])
 	p1 := ContractForEachPeer(peerEndpoints[1], gatewayPeers[1])

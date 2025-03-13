@@ -42,7 +42,7 @@ run_cmd_on_device() {
 # -----------------------------------------------------------------------------
 # Main experiment loop
 # -----------------------------------------------------------------------------
-for ((i=1; i<=12; i++))
+for ((i=12; i>=1; i--))
 do
   echo -e "\n============================================="
   echo "Starting Experiment for i = $i"
@@ -61,7 +61,7 @@ do
 
   # 4) Wait 4 minutes
   echo -e "\n>>> Waiting 4 minutes..."
-  sleep 240  # 240 seconds = 4 minutes
+  sleep 200  # 240 seconds = 4 minutes
 
   echo "Done iteration $i."
 done

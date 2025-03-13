@@ -33,7 +33,7 @@ const (
 )
 
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), 150*time.Second) // Adjust duration here
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second) // Adjust duration here
 	defer cancel()
 
 	// The gRPC client connection should be shared by all Gateway connections to this endpoint
