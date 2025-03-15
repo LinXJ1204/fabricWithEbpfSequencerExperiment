@@ -27,6 +27,7 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 		select {
 		case <-timeout:
 			i = numTransactions
+			wg1.Done()
 		default:
 			go func(i int) {
 				defer wg1.Done()

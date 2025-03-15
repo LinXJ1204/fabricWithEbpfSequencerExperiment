@@ -32,7 +32,7 @@ func main() {
 
 	timeout := make(chan bool, 1)
 	go func() {
-		time.Sleep(200 * time.Second)
+		time.Sleep(90 * time.Second)
 		timeout <- true
 	}()
 

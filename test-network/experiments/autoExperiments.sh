@@ -42,7 +42,7 @@ run_cmd_on_device() {
 # -----------------------------------------------------------------------------
 # Main experiment loop
 # -----------------------------------------------------------------------------
-for ((i=12; i>=1; i--))
+for ((i=20; i>=13; i--))
 do
   echo -e "\n============================================="
   echo "Starting Experiment for i = $i"
@@ -50,18 +50,18 @@ do
 
   # 1) Run 'go run . 2^i' on Device 0
   #    Bash doesn't support '^' for exponent, so we use $((2**i)).
-  run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex1 && export GO111MODULE=on && go mod tidy && nohup go run . $((250*i)) > baseline_512_run_latency_${i}_c1.log 2>&1 &"
+  run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex1 && export GO111MODULE=on && go mod tidy && nohup go run . $((250*i)) > eBPF_TTL_512_run_latency_${i}_c1.log 2>&1 &"
 
   # 2) Wait 10 seconds
   echo -e "\n>>> Waiting 10 seconds..."
   sleep 10
 
   # 3) Run 'go run .' in TPSmeasure folder on Device 2
-  run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/TPSmeasure && nohup /usr/local/go/bin/go run . > baseline_512_run_tps_${i}_c1.log 2>&1 &"
+  run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/TPSmeasure && nohup /usr/local/go/bin/go run . > eBPF_TTL_512_run_tps_${i}_c1.log 2>&1 &"
 
   # 4) Wait 4 minutes
   echo -e "\n>>> Waiting 4 minutes..."
-  sleep 240  # 240 seconds = 4 minutes
+  sleep 120  # 240 seconds = 4 minutes
 
   echo "Done iteration $i."
 done
