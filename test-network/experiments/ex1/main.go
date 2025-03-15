@@ -28,7 +28,13 @@ func main() {
 
 	param1 := os.Args[1] // First argument (should be an integer)
 	rps, _ := strconv.Atoi(param1)
-	tpsLoading := rps / 2 * 60 * 2
+	tpsLoading := rps / 2 * 60 * 4
+
+	timeout := make(chan bool, 1)
+	go func() {
+		time.Sleep(200 * time.Second)
+		timeout <- true
+	}()
 
 	p0 := ContractForEachPeer(peerEndpoints[0], gatewayPeers[0])
 	p1 := ContractForEachPeer(peerEndpoints[1], gatewayPeers[1])
@@ -40,12 +46,12 @@ func main() {
 	// Launch goroutines for TPS experiment
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p0, tpsLoading, rps/2)
+		measureTPSTransferAssetAsync(p0, tpsLoading, rps/2, timeout)
 	}()
 
 	go func() {
 		defer wgg.Done() // Mark this goroutine as done when finished
-		measureTPSTransferAssetAsync(p1, tpsLoading, rps/2)
+		measureTPSTransferAssetAsync(p1, tpsLoading, rps/2, timeout)
 	}()
 
 	/* 	go func() {

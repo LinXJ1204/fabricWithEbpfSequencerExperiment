@@ -12,7 +12,7 @@ import (
 var wg1 sync.WaitGroup
 
 // Function to measure TPS for asynchronous transactions (TransferAsset)
-func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int, workload int) {
+func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int, workload int, timeout chan bool) {
 	errCount := 0
 	txCount := 0
 	ltCount := 0
@@ -24,34 +24,39 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 		wg1.Add(1)
 		assetId := "asset" + strconv.Itoa(int(time.Now().UnixNano())) // Generate random asset IDs
 		time.Sleep(time.Duration(1/float64(workload)*1000000) * time.Microsecond)
-		go func(i int) {
-			defer wg1.Done()
-			if i%25 == 0 {
-				latency, err := createAssetWithLatency(contract, assetId)
-				if err != nil {
-					mu.Lock()
-					errCount++
-					mu.Unlock()
+		select {
+		case <-timeout:
+			i = numTransactions
+		default:
+			go func(i int) {
+				defer wg1.Done()
+				if i%25 == 0 {
+					latency, err := createAssetWithLatency(contract, assetId)
+					if err != nil {
+						mu.Lock()
+						errCount++
+						mu.Unlock()
+					} else {
+						mu1.Lock()
+						txCount++
+						ltCount++
+						totalLt += int(latency)
+						mu1.Unlock()
+					}
 				} else {
-					mu1.Lock()
-					txCount++
-					ltCount++
-					totalLt += int(latency)
-					mu1.Unlock()
+					err := createAsset(contract, assetId)
+					if err != nil {
+						mu.Lock()
+						errCount++
+						mu.Unlock()
+					} else {
+						mu1.Lock()
+						txCount++
+						mu1.Unlock()
+					}
 				}
-			} else {
-				err := createAsset(contract, assetId)
-				if err != nil {
-					mu.Lock()
-					errCount++
-					mu.Unlock()
-				} else {
-					mu1.Lock()
-					txCount++
-					mu1.Unlock()
-				}
-			}
-		}(i)
+			}(i)
+		}
 	}
 
 	wg1.Wait() // Wait for all async transactions to complete
