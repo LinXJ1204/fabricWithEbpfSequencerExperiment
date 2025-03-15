@@ -12,13 +12,19 @@ import (
 var wg1 sync.WaitGroup
 
 // Function to measure TPS for asynchronous transactions (TransferAsset)
-func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int, workload int, timeout chan bool) {
+func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int, workload int) {
 	errCount := 0
 	txCount := 0
 	ltCount := 0
 	totalLt := 0
 	var mu sync.Mutex  // Mutex for thread-safe error count updates
 	var mu1 sync.Mutex // Mutex for thread-safe error count updates
+
+	timeout := make(chan bool, 1)
+	go func() {
+		time.Sleep(90 * time.Second)
+		timeout <- true
+	}()
 
 	for i := 0; i < numTransactions; i++ {
 		wg1.Add(1)
