@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/binary"
 	"fmt"
 	"net"
 	"os"
@@ -13,14 +12,14 @@ import (
 func main() {
 	param1 := os.Args[1] // First argument (should be an integer)
 	rps, _ := strconv.Atoi(param1)
-	msgNum := rps * 60 * 1
+	msgNum := rps * 60 * 3
 
 	param2 := os.Args[2] // First argument (should be an integer)
 	msgSize, _ := strconv.Atoi(param2)
 
 	timeout := make(chan bool, 1)
 	go func() {
-		time.Sleep(1 * time.Minute)
+		time.Sleep(4 * time.Minute)
 		timeout <- true
 	}()
 
@@ -55,21 +54,14 @@ func main() {
 		packet[i] = byte(i % 256)
 	}
 
-	ticker := time.NewTicker(time.Duration(int(1/float64(rps)*1000000)) * time.Microsecond)
-	defer ticker.Stop()
-
 	for i := 0; i < msgNum; i++ {
+		time.Sleep(time.Duration(1/float64(rps)*1000000) * time.Microsecond)
 		select {
 		case <-timeout:
 			fmt.Printf("Total txs sent: %d \n", i)
 			return
-		case <-ticker.C:
-			timestamp := time.Now().UnixNano()
-			binary.BigEndian.PutUint64(packet[2:10], uint64(timestamp))
-			_, err = conn.Write(packet)
-			if err != nil {
-				fmt.Println("Error sending UDP packet:", err)
-			}
+		default:
+
 		}
 	}
 }
