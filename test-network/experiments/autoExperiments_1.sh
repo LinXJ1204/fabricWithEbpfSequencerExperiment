@@ -100,7 +100,7 @@ do
     run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments && nohup ./udpDropDetect.sh eBPF_LT_tcBufferSize_'$tcBufferSize'_RPS_'$((250*t))'_no_'$s' > text.log 2>&1 &"
 
     echo -e "\n>>> Waiting 60 minutes..."
-    sleep 3660
+    sleep 270
 
     echo "Done iteration $t."
     IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
