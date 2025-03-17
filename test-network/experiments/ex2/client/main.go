@@ -13,14 +13,14 @@ import (
 func main() {
 	param1 := os.Args[1] // First argument (should be an integer)
 	rps, _ := strconv.Atoi(param1)
-	msgNum := rps * 60 * 3
+	msgNum := rps * 60 * 1
 
 	param2 := os.Args[2] // First argument (should be an integer)
 	msgSize, _ := strconv.Atoi(param2)
 
 	timeout := make(chan bool, 1)
 	go func() {
-		time.Sleep(4 * time.Minute)
+		time.Sleep(1 * time.Minute)
 		timeout <- true
 	}()
 
