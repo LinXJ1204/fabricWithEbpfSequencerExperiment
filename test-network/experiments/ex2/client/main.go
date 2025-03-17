@@ -24,12 +24,6 @@ func main() {
 	param2 := os.Args[2] // First argument (should be an integer)
 	msgSize, _ := strconv.Atoi(param2)
 
-	timeout := make(chan bool, 1)
-	go func() {
-		time.Sleep(4 * time.Minute)
-		timeout <- true
-	}()
-
 	// UDP target address
 	destAddr := "192.168.50.184:7072" // Replace with the actual target address and port
 
@@ -63,9 +57,14 @@ func main() {
 
 	for t := 0; t < 5; t++ {
 		wg1.Add(1)
+		timeout := make(chan bool, 1)
+		go func() {
+			time.Sleep(4 * time.Minute)
+			timeout <- true
+		}()
 		go func() {
 			for i := 0; i < (msgNum / 5); i++ {
-				time.Sleep(time.Duration(1/float64(rps)*1000000) * time.Microsecond)
+				time.Sleep(time.Duration(1/float64(rps)*1000000*5) * time.Microsecond)
 				select {
 				case <-timeout:
 					i = msgNum
