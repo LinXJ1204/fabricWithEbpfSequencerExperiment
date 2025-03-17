@@ -54,7 +54,10 @@ func main() {
 		packet[i] = byte(i % 256)
 	}
 
+	tt := time.Duration(1/float64(rps)*1000000) * time.Microsecond
+
 	for i := 0; i < msgNum; i++ {
+		time.Sleep(tt)
 		select {
 		case <-timeout:
 			fmt.Printf("Total txs sent: %d \n", i)
