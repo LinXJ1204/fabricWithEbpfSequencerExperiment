@@ -62,20 +62,14 @@ func main() {
 			fmt.Printf("Total txs sent: %d \n", i)
 			return
 		default:
-			go func(i int) {
+			// Get current timestamp (nanoseconds)
+			timestamp := time.Now().UnixNano()
 
-				// Get current timestamp (nanoseconds)
-				timestamp := time.Now().UnixNano()
+			// Encode timestamp in the first 8 bytes
+			binary.BigEndian.PutUint64(packet[2:10], uint64(timestamp))
 
-				// Encode timestamp in the first 8 bytes
-				binary.BigEndian.PutUint64(packet[2:10], uint64(timestamp))
-
-				// Send packet
-				_, err = conn.Write(packet)
-				if err != nil {
-					fmt.Println("Error sending UDP packet:", err)
-				}
-			}(i)
+			// Send packet
+			conn.Write(packet)
 		}
 	}
 }
