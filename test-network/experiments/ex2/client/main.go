@@ -19,7 +19,7 @@ func main() {
 
 	timeout := make(chan bool, 1)
 	go func() {
-		time.Sleep(4 * time.Minute)
+		time.Sleep(1 * time.Minute)
 		timeout <- true
 	}()
 
@@ -56,16 +56,22 @@ func main() {
 
 	tt := time.Duration(1/float64(rps)*1000000) * time.Microsecond
 
-	for i := 0; i < msgNum; i++ {
+	fmt.Println(1 / float64(rps) * 1000000)
+	txCount := 0
+
+	for txCount < msgNum {
 		time.Sleep(tt)
 		select {
 		case <-timeout:
-			fmt.Printf("Total txs sent: %d \n", i)
-			return
+			fmt.Printf("Total txs sent: %d \n", txCount)
+			txCount = msgNum
 		default:
 
 		}
+		txCount++
 	}
+
+	fmt.Println("Total txs sent: %d \n", txCount)
 }
 
 // getRawSocketFd extracts the file descriptor from net.Conn
