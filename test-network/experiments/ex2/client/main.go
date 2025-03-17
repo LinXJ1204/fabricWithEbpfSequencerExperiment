@@ -55,21 +55,21 @@ func main() {
 		packet[i] = byte(i % 256)
 	}
 
+	ticker := time.NewTicker(time.Duration(1/float64(rps)*1000000) * time.Microsecond)
+	defer ticker.Stop()
+
 	for i := 0; i < msgNum; i++ {
-		time.Sleep(time.Duration(1/float64(rps)*1000000) * time.Microsecond)
 		select {
 		case <-timeout:
 			fmt.Printf("Total txs sent: %d \n", i)
 			return
-		default:
-			// Get current timestamp (nanoseconds)
+		case <-ticker.C:
 			timestamp := time.Now().UnixNano()
-
-			// Encode timestamp in the first 8 bytes
 			binary.BigEndian.PutUint64(packet[2:10], uint64(timestamp))
-
-			// Send packet
-			conn.Write(packet)
+			_, err = conn.Write(packet)
+			if err != nil {
+				fmt.Println("Error sending UDP packet:", err)
+			}
 		}
 	}
 }
