@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/binary"
 	"fmt"
 	"net"
 	"os"
@@ -64,12 +63,7 @@ func main() {
 			fmt.Printf("Total txs sent: %d \n", i)
 			return
 		case <-ticker.C:
-			timestamp := time.Now().UnixNano()
-			binary.BigEndian.PutUint64(packet[2:10], uint64(timestamp))
-			_, err = conn.Write(packet)
-			if err != nil {
-				fmt.Println("Error sending UDP packet:", err)
-			}
+			print(1)
 		}
 	}
 }
