@@ -78,7 +78,7 @@ do
     echo "Starting Experiment for node count = $t"
     echo "============================================="
 
-    for ((i=6; i<=6; i++))
+    for ((i=6; i<=14; i++))
     do
 
     program=${tc_progarms[4]}
@@ -97,7 +97,7 @@ do
 
     run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/server && export GO111MODULE=on && go mod tidy && nohup go run . > eBPF_sequencer_LT_tcBuffer_'$program'_4096_size'$tcBufferSize'_no_'$s'.log 2>&1 &"
     run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/client && export GO111MODULE=on && go mod tidy && nohup go run . $((250*t)) 3200 > text.log 2>&1 &"
-    run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments && nohup ./udpDropDetect.sh eBPF_LT_tcBufferSize_'$tcBufferSize'_RPS_'$'_no_'$((250*t))' > text.log 2>&1 &"
+    run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments && nohup ./udpDropDetect.sh eBPF_LT_tcBufferSize_'$tcBufferSize'_RPS_'$((250*t))'_no_'$s' > text.log 2>&1 &"
 
     echo -e "\n>>> Waiting 60 minutes..."
     sleep 3660
