@@ -55,7 +55,6 @@ func main() {
 	}
 
 	for i := 0; i < msgNum; i++ {
-		time.Sleep(time.Duration(1/float64(rps)*1000000) * time.Microsecond)
 		select {
 		case <-timeout:
 			fmt.Printf("Total txs sent: %d \n", i)
