@@ -19,7 +19,7 @@ func main() {
 
 	param1 := os.Args[1] // First argument (should be an integer)
 	rps, _ := strconv.Atoi(param1)
-	msgNum := rps * 60 * 3
+	msgNum := rps * 60 * 4
 
 	param2 := os.Args[2] // First argument (should be an integer)
 	msgSize, _ := strconv.Atoi(param2)
@@ -59,12 +59,12 @@ func main() {
 		wg1.Add(1)
 		timeout := make(chan bool, 1)
 		go func() {
-			time.Sleep(4 * time.Minute)
+			time.Sleep(210 * time.Second)
 			timeout <- true
 		}()
 		go func() {
 			for i := 0; i < (msgNum / 5); i++ {
-				time.Sleep(time.Duration(1/float64(rps)*1000000*5) * time.Microsecond)
+				time.Sleep(time.Duration(1/float64(rps/5)*1000000) * time.Microsecond)
 				select {
 				case <-timeout:
 					i = msgNum
