@@ -12,7 +12,7 @@ import (
 func main() {
 	param1 := os.Args[1] // First argument (should be an integer)
 	rps, _ := strconv.Atoi(param1)
-	msgNum := rps * 60 * 3
+	msgNum := rps * 60 * 1
 
 	param2 := os.Args[2] // First argument (should be an integer)
 	msgSize, _ := strconv.Atoi(param2)
@@ -61,13 +61,6 @@ func main() {
 
 	for txCount < msgNum {
 		time.Sleep(tt)
-		select {
-		case <-timeout:
-			fmt.Printf("Total txs sent: %d \n", txCount)
-			txCount = msgNum
-		default:
-
-		}
 		txCount++
 	}
 
