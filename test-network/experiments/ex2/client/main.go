@@ -1,25 +1,32 @@
 package main
 
 import (
+	"encoding/binary"
 	"fmt"
 	"net"
 	"os"
 	"strconv"
+	"sync"
 	"syscall"
 	"time"
 )
 
+var wg1 sync.WaitGroup
+var mu sync.Mutex // Mutex for thread-safe error count updates
+
 func main() {
+	reqCount := 0
+
 	param1 := os.Args[1] // First argument (should be an integer)
 	rps, _ := strconv.Atoi(param1)
-	msgNum := rps * 60 * 1
+	msgNum := rps * 60 * 3
 
 	param2 := os.Args[2] // First argument (should be an integer)
 	msgSize, _ := strconv.Atoi(param2)
 
 	timeout := make(chan bool, 1)
 	go func() {
-		time.Sleep(1 * time.Minute)
+		time.Sleep(4 * time.Minute)
 		timeout <- true
 	}()
 
@@ -54,17 +61,36 @@ func main() {
 		packet[i] = byte(i % 256)
 	}
 
-	tt := time.Duration(1/float64(rps)*1000000) * time.Microsecond
+	for t := 0; t < 5; t++ {
+		wg1.Add(1)
+		go func() {
+			for i := 0; i < (msgNum / 5); i++ {
+				time.Sleep(time.Duration(1/float64(rps)*1000000) * time.Microsecond)
+				select {
+				case <-timeout:
+					i = msgNum
+				default:
+					go func(i int) {
+						// Get current timestamp (nanoseconds)
+						timestamp := time.Now().UnixNano()
 
-	fmt.Println(1 / float64(rps) * 1000000)
-	txCount := 0
+						// Encode timestamp in the first 8 bytes
+						binary.BigEndian.PutUint64(packet[2:10], uint64(timestamp))
 
-	for txCount < msgNum {
-		time.Sleep(tt)
-		txCount++
+						// Send packet
+						conn.Write(packet)
+						mu.Lock()
+						reqCount++
+						mu.Unlock()
+					}(i)
+				}
+			}
+			wg1.Done()
+		}()
 	}
 
-	fmt.Println("Total txs sent: %d \n", txCount)
+	wg1.Wait()
+	fmt.Printf("Total txs sent: %d \n", reqCount)
 }
 
 // getRawSocketFd extracts the file descriptor from net.Conn
