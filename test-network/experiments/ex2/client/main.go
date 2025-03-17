@@ -49,14 +49,20 @@ func main() {
 		os.Exit(1)
 	}
 
+	packet := make([]byte, msgSize)
+	// Fill remaining bytes with dummy data
+	for i := 10; i < len(packet); i++ {
+		packet[i] = byte(i % 256)
+	}
+
 	for i := 0; i < msgNum; i++ {
+		time.Sleep(time.Duration(1/float64(rps)*1000000) * time.Microsecond)
 		select {
 		case <-timeout:
 			fmt.Printf("Total txs sent: %d \n", i)
 			return
 		default:
 			go func(i int) {
-				packet := make([]byte, msgSize)
 
 				// Get current timestamp (nanoseconds)
 				timestamp := time.Now().UnixNano()
@@ -64,18 +70,12 @@ func main() {
 				// Encode timestamp in the first 8 bytes
 				binary.BigEndian.PutUint64(packet[2:10], uint64(timestamp))
 
-				// Fill remaining bytes with dummy data
-				for i := 10; i < len(packet); i++ {
-					packet[i] = byte(i % 256)
-				}
-
 				// Send packet
 				_, err = conn.Write(packet)
 				if err != nil {
 					fmt.Println("Error sending UDP packet:", err)
 				}
 			}(i)
-			time.Sleep(time.Duration(1/float64(rps)*1000000) * time.Microsecond)
 		}
 	}
 }
