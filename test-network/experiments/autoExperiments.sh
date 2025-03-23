@@ -23,6 +23,14 @@ DEVICES["3"]="192.168.50.239 nsd1235 nsd12345" #O_0
 DEVICES["4"]="192.168.50.219 nsd12345 nsd12345" #O_2
 DEVICES["6"]="192.168.50.182 nsd12345 nsd12345" #O_3
 
+declare -A tc_progarms
+tc_progarms["1"]="tc_LRU_1node"
+tc_progarms["2"]="tc_LRU_2nodes"
+tc_progarms["3"]="tc_LRU_3nodes"
+tc_progarms["4"]="tc"
+tc_progarms["5"]="tc_LRU_5nodes"
+
+SUCCESS_MSG="committed with status (VALID) at localhost:12051"
 
 # -----------------------------------------------------------------------------
 # Helper function to run a command via SSH on a specific device
@@ -42,11 +50,35 @@ run_cmd_on_device() {
 # -----------------------------------------------------------------------------
 # Main experiment loop
 # -----------------------------------------------------------------------------
-for ((i=20; i>=13; i--))
+for ((i=20; i>=9; i--))
 do
   echo -e "\n============================================="
   echo "Starting Experiment for i = $i"
   echo "============================================="
+
+  program=${tc_progarms[4]}
+  tcBufferSize=1000000
+  IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
+    sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
+      "echo '$pass' | sudo -S tc qdisc add dev enp109s0 root handle 1: pfifo limit '$tcBufferSize' && \
+      cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec/exp && \
+      nohup echo '$pass' | sudo -S timeout 3 ./$program enp109s0"
+  echo -e "\n>>> Waiting 5 seconds..."
+  sleep 5
+
+  while true; do
+    # Run the deployment script and capture the output
+    OUTPUT=$(run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/autoDeployment && ./autoDeployment.sh")
+    
+    # Check if the output contains the desired success message
+    if echo "$OUTPUT" | grep -q "$SUCCESS_MSG"; then
+      echo "Deployment successful."
+      break  # Exit the loop when the deployment is successful
+    else
+      echo "Deployment not successful. Retrying in 5 seconds..."
+      sleep 5  # Wait a few seconds before trying again
+    fi
+  done
 
   # 1) Run 'go run . 2^i' on Device 0
   #    Bash doesn't support '^' for exponent, so we use $((2**i)).
@@ -63,7 +95,15 @@ do
   echo -e "\n>>> Waiting 4 minutes..."
   sleep 120  # 240 seconds = 4 minutes
 
+
+
   echo "Done iteration $i."
+      IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
+      sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
+        "nohup echo '$pass' | sudo -S reboot 2>&1 &"
+
+  sleep 150
+
 done
 
 # -----------------------------------------------------------------------------

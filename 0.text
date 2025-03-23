@@ -57,3 +57,81 @@ orderer 4 in laptop i7-9750H CPU, 32GB memory
 Sequencer in laptop i5-13500HX CPU, 16GB memory
 
 unable to broadcast a message to a host multiple times, packets would conflict.
+
+20000-3500-2
+
+10000-3250
+
+ifconfig enp109s0
+ ethtool -g enp109s0
+
+watch -n 1 'tc -s qdisc show dev enp109s0'
+ifstat -i enp109s0 1
+
+watch -n 1 'ip -s link show dev enp109s0'
+
+endhost:
+Sent 7649080956 bytes 6902245 pkt (dropped 130734, overlimits 0 requeues 98)
+
+eBPF:
+Sent 8906250542 bytes 7988224 pkt (dropped 1896408, overlimits 0 requeues 4)
+
+eBPFWastedLoop:
+Sent 3760082216 bytes 3404611 pkt (dropped 1046830, overlimits 0 requeues 1073737)
+
+fq_mode:
+Sent 10274152230 bytes 9259327 pkt (dropped 593634, overlimits 0 requeues 0)
+
+sudo tc qdisc replace dev enp109s0 root fq limit 50000 flow_limit 2000 quantum 3000 buckets 4096:
+Sent 10282551308 bytes 9268731 pkt (dropped 598043, overlimits 0 requeues 0)
+
+
+sudo tc qdisc replace dev enp109s0 root cake bandwidth 900mbit
+
+sudo cpupower frequency-set -g performance
+
+sudo tc qdisc replace dev enp109s0 root pfifo_fast
+sudo ip link set enp109s0 txqueuelen 100000
+
+
+# 清除舊有 root qdisc
+tc qdisc del dev enp109s0 root 2>/dev/null
+
+# 建立根 HTB qdisc, 預設 class (default) 指到 40
+tc qdisc add dev enp109s0 root handle 1: htb default 40
+
+# 建立頂層 class (1:1), 整體最大頻寬設定為 1Gbps
+tc class add dev enp109s0 parent 1: classid 1:1 htb rate 1gbit ceil 1gbit burst 15k
+
+# 給 192.168.50.230
+sudo tc class add dev enp109s0 parent 1:1 classid 1:10 htb rate 250mbit ceil 250mbit burst 10k
+
+# 給 192.168.50.239
+sudo tc class add dev enp109s0 parent 1:1 classid 1:20 htb rate 250mbit ceil 250mbit burst 10k
+
+# 給 192.168.50.219
+sudo tc class add dev enp109s0 parent 1:1 classid 1:30 htb rate 250mbit ceil 250mbit burst 10k
+
+# 給 192.168.50.182
+sudo tc class add dev enp109s0 parent 1:1 classid 1:40 htb rate 250mbit ceil 250mbit burst 10k
+
+sudo tc qdisc add dev enp109s0 parent 1:10 handle 10: sfq perturb 10
+sudo tc qdisc add dev enp109s0 parent 1:20 handle 20: sfq perturb 10
+sudo tc qdisc add dev enp109s0 parent 1:30 handle 30: sfq perturb 10
+sudo tc qdisc add dev enp109s0 parent 1:40 handle 40: sfq perturb 10
+
+# 將 IP 192.168.50.230 -> class 1:10
+sudo tc filter add dev enp109s0 parent 1: protocol ip prio 1 u32 \
+  match ip dst 192.168.50.230 flowid 1:10
+
+# 將 IP 192.168.50.239 -> class 1:20
+sudo tc filter add dev enp109s0 parent 1: protocol ip prio 1 u32 \
+  match ip dst 192.168.50.239 flowid 1:20
+
+# 將 IP 192.168.50.219 -> class 1:30
+sudo tc filter add dev enp109s0 parent 1: protocol ip prio 1 u32 \
+  match ip dst 192.168.50.219 flowid 1:30
+
+# 將 IP 192.168.50.182 -> class 1:40
+sudo tc filter add dev enp109s0 parent 1: protocol ip prio 1 u32 \
+  match ip dst 192.168.50.182 flowid 1:40
