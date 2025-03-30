@@ -5,29 +5,37 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"runtime"
 	"strconv"
 	"sync"
+	"sync/atomic"
 	"syscall"
 	"time"
 )
 
-var wg1 sync.WaitGroup
-var mu sync.Mutex // Mutex for thread-safe error count updates
+var reqCount int64 // Atomic counter for requests sent
 
 func main() {
-	reqCount := 0
+	if len(os.Args) < 3 {
+		fmt.Println("Usage: go run main.go <RPS> <MessageSize>")
+		os.Exit(1)
+	}
 
-	param1 := os.Args[1] // First argument (should be an integer)
-	rps, _ := strconv.Atoi(param1)
-	msgNum := rps * 60 * 4
+	// Parse command-line arguments
+	rps, err := strconv.Atoi(os.Args[1])
+	if err != nil || rps <= 0 {
+		fmt.Println("Invalid RPS value")
+		os.Exit(1)
+	}
+	msgSize, err := strconv.Atoi(os.Args[2])
+	if err != nil || msgSize < 10 {
+		fmt.Println("Invalid Message Size (minimum 10 bytes)")
+		os.Exit(1)
+	}
 
-	param2 := os.Args[2] // First argument (should be an integer)
-	msgSize, _ := strconv.Atoi(param2)
+	destAddr := "192.168.50.184:7072" // Replace with actual target address and port
 
-	// UDP target address
-	destAddr := "192.168.50.184:7072" // Replace with the actual target address and port
-
-	// Create UDP socket
+	// Create UDP connection
 	conn, err := net.Dial("udp", destAddr)
 	if err != nil {
 		fmt.Println("Error creating UDP connection:", err)
@@ -35,61 +43,72 @@ func main() {
 	}
 	defer conn.Close()
 
-	// Get raw file descriptor
+	// Set TTL to 171
 	fd, err := getRawSocketFd(conn)
 	if err != nil {
 		fmt.Println("Error getting raw socket FD:", err)
 		os.Exit(1)
 	}
-
-	// Set TTL (Time-To-Live) to 171
-	err = syscall.SetsockoptInt(fd, syscall.IPPROTO_IP, syscall.IP_TTL, 171)
+	err = syscall.SetsockoptInt(fd, syscall.IPPROTO_IP, syscall.IP_TTL, 170)
 	if err != nil {
 		fmt.Println("Error setting TTL:", err)
 		os.Exit(1)
 	}
 
-	packet := make([]byte, msgSize)
-	// Fill remaining bytes with dummy data
-	for i := 10; i < len(packet); i++ {
-		packet[i] = byte(i % 256)
+	packetTemplate := make([]byte, msgSize)
+	for i := 10; i < len(packetTemplate); i++ {
+		packetTemplate[i] = byte(i % 256) // Fill with dummy data
 	}
 
-	for t := 0; t < 5; t++ {
-		wg1.Add(1)
-		timeout := make(chan bool, 1)
+	numWorkers := runtime.NumCPU() * 2 // Number of workers based on CPU cores
+	ratePerWorker := rps / numWorkers
+
+	fmt.Printf("Starting %d workers with %d RPS each...\n", numWorkers, ratePerWorker)
+
+	var wg sync.WaitGroup
+	wg.Add(numWorkers)
+
+	for i := 0; i < numWorkers; i++ {
 		go func() {
-			time.Sleep(210 * time.Second)
-			timeout <- true
+			defer wg.Done()
+			sendPackets(conn, packetTemplate, ratePerWorker)
 		}()
-		go func() {
-			for i := 0; i < (msgNum / 5); i++ {
-				time.Sleep(time.Duration(1/float64(rps/5)*1000000) * time.Microsecond)
-				select {
-				case <-timeout:
-					i = msgNum
-				default:
-					go func(i int) {
-						// Get current timestamp (nanoseconds)
-						timestamp := time.Now().UnixNano()
+	}
 
-						// Encode timestamp in the first 8 bytes
-						binary.BigEndian.PutUint64(packet[2:10], uint64(timestamp))
+	wg.Wait()
+	fmt.Printf("Total packets sent: %d\n", atomic.LoadInt64(&reqCount))
+}
 
-						// Send packet
-						conn.Write(packet)
-						mu.Lock()
-						reqCount++
-						mu.Unlock()
-					}(i)
-				}
+// sendPackets sends packets at the specified rate using a ticker for precise timing
+func sendPackets(conn net.Conn, packetTemplate []byte, rate int) {
+	ticker := time.NewTicker(time.Second / time.Duration(rate))
+	defer ticker.Stop()
+
+	packet := make([]byte, len(packetTemplate))
+	copy(packet, packetTemplate)
+
+	timeout := make(chan bool, 1)
+	go func() {
+		time.Sleep(60 * time.Second)
+		timeout <- true
+	}()
+
+	for range ticker.C {
+		select {
+		case <-timeout:
+			return
+		default:
+			timestamp := time.Now().UnixNano()
+			binary.BigEndian.PutUint64(packet[2:10], uint64(timestamp)) // Embed timestamp
+
+			if _, err := conn.Write(packet); err == nil {
+				atomic.AddInt64(&reqCount, 1) // Increment atomic counter
+			} else {
+				fmt.Println("Error sending packet:", err)
+				return
 			}
-			wg1.Done()
-		}()
+		}
 	}
-
-	wg1.Wait()
-	fmt.Printf("Total txs sent: %d \n", reqCount)
 }
 
 // getRawSocketFd extracts the file descriptor from net.Conn
