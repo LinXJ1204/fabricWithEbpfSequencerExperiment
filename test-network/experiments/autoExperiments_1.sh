@@ -72,7 +72,7 @@ run_cmd_on_device() {
 # -----------------------------------------------------------------------------
 for ((s=1; s<=3; s++))
 do
-  for ((t=8; t<=20; t++))
+  for ((t=1; t<=20; t++))
   do
     echo -e "\n============================================="
     echo "Starting Experiment for node count = $t"
@@ -95,9 +95,9 @@ do
     echo "Starting Experiment for node = $i"
     echo "============================================="
 
-    run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/server && export GO111MODULE=on && go mod tidy && nohup go run . > endhost_rps_'$((500*t))'_pkgsize_200_no_'$s'.log 2>&1 &"
-    run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/client && export GO111MODULE=on && go mod tidy && nohup go run . $((500*t)) 200 > text.log 2>&1 &"
-    run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments && nohup ./udpDropDetect.sh endhost_DROP_rps_'$((500*t))'_pkgsize_200_no_'$s'.log > text.log 2>&1 &"
+    run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/server && export GO111MODULE=on && go mod tidy && nohup go run . > endhost_rps_'$((250*t))'_pkgsize_200_node_'$((1+i*2))'_no_'$s'.log 2>&1 &"
+    run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/client && export GO111MODULE=on && go mod tidy && nohup go run . $((250*t)) 200 > text.log 2>&1 &"
+    run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments && nohup ./udpDropDetect.sh endhost_DROP_rps_'$((250*t))'_pkgsize_200_node_'$((1+i*2))'_no_'$s'.log > text.log 2>&1 &"
 
     echo -e "\n>>> Waiting 4 minutes..."
     sleep 100
