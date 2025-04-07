@@ -23,12 +23,15 @@ DEVICES["3"]="192.168.50.239 nsd1235 nsd12345" #O_0
 DEVICES["4"]="192.168.50.219 nsd12345 nsd12345" #O_2
 DEVICES["6"]="192.168.50.182 nsd12345 nsd12345" #O_3
 
-declare -A tc_progarms
-tc_progarms["1"]="tc_LRU_1node"
-tc_progarms["2"]="tc_LRU_2nodes"
-tc_progarms["3"]="tc_LRU_3nodes"
-tc_progarms["4"]="tc"
-tc_progarms["5"]="tc_LRU_5nodes"
+declare -A tc_LRU_progarms
+tc_progarms["1"]="tc_LRU_3node"
+tc_progarms["2"]="tc_LRU_5node"
+tc_progarms["3"]="tc_LRU_7node"
+
+declare -A tc_TTL_progarms
+tc_progarms["1"]="tc_LRU_3node"
+tc_progarms["2"]="tc_LRU_5node"
+tc_progarms["3"]="tc_LRU_7node"
 
 declare -A tc_bufferSize
 tc_bufferSize["1"]="1000"
@@ -81,12 +84,12 @@ do
     for ((i=1; i<=3; i++))
     do
 
-    program=${tc_progarms[4]}
-    tcBufferSize=${tc_bufferSize[$i]}
+    program=${tc_LRU_progarms[$i]}
     IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
     sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
-    "echo '$pass' | sudo -S tc qdisc add dev enp109s0 root handle 1: pfifo limit 1000000"
-    run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencer/sequencer && export GO111MODULE=on && go mod tidy && nohup go run . $((1+i*2)) > text.log 2>&1 &"
+    "echo '$pass' | sudo -S tc qdisc add dev enp109s0 root handle 1: pfifo limit 1000000 && \
+    cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec/exp && \
+    nohup echo '$pass' | sudo -S timeout 3 ./$program enp109s0"
 
     echo -e "\n>>> Waiting 5 seconds..."
     sleep 5
@@ -95,9 +98,9 @@ do
     echo "Starting Experiment for node = $i"
     echo "============================================="
 
-    run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/server && export GO111MODULE=on && go mod tidy && nohup go run . > endhost_rps_'$((250*t))'_pkgsize_200_node_'$((1+i*2))'_no_'$s'.log 2>&1 &"
+    run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/server && export GO111MODULE=on && go mod tidy && nohup go run . > eBPF_LRU_rps_'$((250*t))'_pkgsize_200_node_'$((1+i*2))'_no_'$s'.log 2>&1 &"
     run_cmd_on_device 2 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex2/client && export GO111MODULE=on && go mod tidy && nohup go run . $((250*t)) 200 > text.log 2>&1 &"
-    run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments && nohup ./udpDropDetect.sh endhost_DROP_rps_'$((250*t))'_pkgsize_200_node_'$((1+i*2))'_no_'$s'.log > text.log 2>&1 &"
+    run_cmd_on_device 5 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments && nohup ./udpDropDetect.sh eBPF_LRU_DROP_rps_'$((250*t))'_pkgsize_200_node_'$((1+i*2))'_no_'$s'.log > text.log 2>&1 &"
 
     echo -e "\n>>> Waiting 4 minutes..."
     sleep 100
