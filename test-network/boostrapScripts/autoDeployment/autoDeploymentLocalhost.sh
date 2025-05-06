@@ -74,9 +74,10 @@ run_local_script_with_env "test-network/boostrapScripts/joinChannel/peer2.sh"
 sleep 5
 
 # ---- Install Chaincode ----
-run_local_script_with_env "test-network/boostrapScripts/CCpackage/peerCCInstall.sh"
-run_local_script_with_env "test-network/boostrapScripts/CCpackage/peer1CCInstall.sh"
-run_local_script_with_env "test-network/boostrapScripts/CCpackage/peer2CCInstall.sh"
+cd "$ROOT_DIR/test-network/boostrapScripts/CCpackage"
+./peerCCInstall.sh
+./peer1CCInstall.sh
+./peer2CCInstall.sh
 
 sleep 10
 
