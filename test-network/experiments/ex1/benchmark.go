@@ -22,7 +22,7 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 
 	timeout := make(chan bool, 1)
 	go func() {
-		time.Sleep(90 * time.Second)
+		time.Sleep(70 * time.Second)
 		timeout <- true
 	}()
 

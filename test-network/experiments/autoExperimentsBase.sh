@@ -58,19 +58,6 @@ do
     echo "Starting Experiment for i = $i"
     echo "============================================="
 
-    program=${tc_progarms[4]}
-    tcBufferSize=1000000
-    IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
-      sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
-      "echo '$pass' | sudo -S tc qdisc add dev enp109s0 root handle 1: htb default 12 && \
-      sudo tc class add dev enp109s0 parent 1: classid 1:1 htb rate 1000mbit && \
-      sudo tc qdisc add dev enp109s0 parent 1:1 handle 10: netem delay 50ms && \
-      sudo tc qdisc add dev enp109s0 parent 10: handle 20: pfifo limit '$tcBufferSize' && \
-      cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/ebpfExec/exp && \
-      nohup echo '$pass' | sudo -S timeout 3 ./$program enp109s0"
-    echo -e "\n>>> Waiting 5 seconds..."
-    sleep 5
-
     while true; do
       # Run the deployment script and capture the output
       OUTPUT=$(run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/autoDeployment && ./autoDeployment.sh" 2>&1)
@@ -90,31 +77,21 @@ do
 
     # 1) Run 'go run . 2^i' on Device 0
     #    Bash doesn't support '^' for exponent, so we use $((2**i)).
-    run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex1 && export GO111MODULE=on && go mod tidy && nohup go run . $((250*i)) > eBPF_LRU_512_run_latency_50ms_${i}_c${t}.log 2>&1 &"
+    run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/ex1 && export GO111MODULE=on && go mod tidy && nohup go run . $((250*i)) > raft_512_run_latency_50ms_${i}_c${t}.log 2>&1 &"
 
     # 2) Wait 10 seconds
     echo -e "\n>>> Waiting 10 seconds..."
     sleep 10
 
     # 3) Run 'go run .' in TPSmeasure folder on Device 2
-    run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/TPSmeasure && nohup /usr/local/go/bin/go run . > eBPF_LRU_512_run_tps_50ms_${i}_c${t}.log 2>&1 &"
+    run_cmd_on_device 1 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/experiments/TPSmeasure && nohup /usr/local/go/bin/go run . > raft_512_run_tps_50ms_${i}_c${t}.log 2>&1 &"
 
     # 4) Wait 4 minutes
     echo -e "\n>>> Waiting 4 minutes..."
-    sleep 120  # 240 seconds = 4 minutes
-
-
-
-    echo "Done iteration $i."
-        IFS=' ' read -r ip user pass <<< "${DEVICES[5]}"
-        sshpass -p "$pass" ssh -o StrictHostKeyChecking=no "$user@$ip" \
-          "nohup echo '$pass' | sudo -S reboot 2>&1 &"
-
-    sleep 120
+    sleep 90  # 240 seconds = 4 minutes
 
   done
 done
-
 # -----------------------------------------------------------------------------
 # Completion message
 # -----------------------------------------------------------------------------
