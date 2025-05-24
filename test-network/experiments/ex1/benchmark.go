@@ -22,7 +22,7 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 
 	timeout := make(chan bool, 1)
 	go func() {
-		time.Sleep(70 * time.Second)
+		time.Sleep(90 * time.Second)
 		timeout <- true
 	}()
 
@@ -37,7 +37,7 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 		default:
 			go func(i int) {
 				defer wg1.Done()
-				if i%25 == 0 {
+				if i%75 == 0 {
 					latency, err := createAssetWithLatency(contract, assetId)
 					if err != nil {
 						mu.Lock()
@@ -68,4 +68,5 @@ func measureTPSTransferAssetAsync(contract *client.Contract, numTransactions int
 
 	wg1.Wait() // Wait for all async transactions to complete
 	fmt.Printf("=======Transaction Average Latency: %d =======\n", totalLt/ltCount)
+	fmt.Printf("=======Error count: %d =======\n", errCount)
 }

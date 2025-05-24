@@ -60,7 +60,7 @@ do
 
     while true; do
       # Run the deployment script and capture the output
-      OUTPUT=$(run_cmd_on_device 0 "cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/autoDeployment && ./autoDeployment.sh" 2>&1)
+      OUTPUT=$(run_cmd_on_device 0 "export PATH=/home/nsd/mainPlan/bin:$PATH && cd mainPlan/fabricWithEbpfSequencerExperiment/test-network/boostrapScripts/autoDeployment && ./autoDeployment.sh" 2>&1)
       sleep 5  # Wait a few seconds before trying again
 
       # Check if the output contains the desired success message
